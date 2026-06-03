@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EJAF Technology – CCTV Project Planner</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Rajdhani:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <!-- jsPDF + xlsx -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="logo-block">
+        <div class="logo-ejaf">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="48" height="48" rx="10" fill="#0a2540"/>
+            <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="#00c6ff" font-family="Rajdhani,sans-serif" font-weight="700" font-size="14">EJAF</text>
+          </svg>
+          <div class="logo-text">
+            <span class="logo-main">Ejaf Technology</span>
+            <span class="logo-sub">CCTV Project Planner</span>
+          </div>
+        </div>
+        <div class="powered-by">Powered by <strong>Siwar</strong></div>
+      </div>
+      <div class="header-controls">
+        <button class="lang-toggle" id="langToggle" onclick="toggleLang()">
+          <span class="lang-icon">🌐</span>
+          <span id="langLabel">English</span>
+        </button>
+        <div class="header-badge">v2.0 Pro</div>
+      </div>
+    </div>
+    <div class="header-nav">
+      <button class="nav-tab active" data-tab="project" onclick="switchTab('project')">
+        <span class="tab-icon">📋</span><span data-ar="المشروع" data-en="Project">المشروع</span>
+      </button>
+      <button class="nav-tab" data-tab="cameras" onclick="switchTab('cameras')">
+        <span class="tab-icon">📷</span><span data-ar="الكاميرات" data-en="Cameras">الكاميرات</span>
+      </button>
+      <button class="nav-tab" data-tab="racks" onclick="switchTab('racks')">
+        <span class="tab-icon">🗄️</span><span data-ar="الركات" data-en="Racks">الركات</span>
+      </button>
+      <button class="nav-tab" data-tab="cables" onclick="switchTab('cables')">
+        <span class="tab-icon">🔌</span><span data-ar="الكابلات" data-en="Cables">الكابلات</span>
+      </button>
+      <button class="nav-tab" data-tab="labor" onclick="switchTab('labor')">
+        <span class="tab-icon">👷</span><span data-ar="العمالة" data-en="Labor">العمالة</span>
+      </button>
+      <button class="nav-tab" data-tab="floorplan" onclick="switchTab('floorplan')">
+        <span class="tab-icon">🗺️</span><span data-ar="المخطط" data-en="Floor Plan">المخطط</span>
+      </button>
+      <button class="nav-tab" data-tab="report" onclick="switchTab('report')">
+        <span class="tab-icon">📊</span><span data-ar="التقارير" data-en="Reports">التقارير</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-main">
+
+    <!-- ====== TAB: PROJECT ====== -->
+    <section class="tab-content active" id="tab-project">
+      <div class="section-header">
+        <h2 data-ar="معلومات المشروع" data-en="Project Information">معلومات المشروع</h2>
+        <p class="section-desc" data-ar="أدخل البيانات الأساسية للمشروع" data-en="Enter basic project data">أدخل البيانات الأساسية للمشروع</p>
+      </div>
+      <div class="card-grid two-col">
+        <div class="card">
+          <h3 class="card-title" data-ar="بيانات المشروع" data-en="Project Details">بيانات المشروع</h3>
+          <div class="form-group">
+            <label data-ar="اسم المشروع" data-en="Project Name">اسم المشروع</label>
+            <input type="text" id="projectName" placeholder="مثال: مجمع الوردة السكني" />
+          </div>
+          <div class="form-group">
+            <label data-ar="اسم العميل" data-en="Client Name">اسم العميل</label>
+            <input type="text" id="clientName" placeholder="اسم الشركة أو الشخص" />
+          </div>
+          <div class="form-group">
+            <label data-ar="الموقع" data-en="Location">الموقع</label>
+            <input type="text" id="projectLocation" placeholder="المدينة / العنوان" />
+          </div>
+          <div class="form-group">
+            <label data-ar="تاريخ المشروع" data-en="Project Date">تاريخ المشروع</label>
+            <input type="date" id="projectDate" />
+          </div>
+          <div class="form-group">
+            <label data-ar="المهندس المسؤول" data-en="Engineer in Charge">المهندس المسؤول</label>
+            <input type="text" id="engineerName" />
+          </div>
+          <div class="form-group">
+            <label data-ar="رقم المشروع" data-en="Project Number">رقم المشروع</label>
+            <input type="text" id="projectNumber" placeholder="EJ-2025-001" />
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title" data-ar="هيكل المبنى" data-en="Building Structure">هيكل المبنى</h3>
+          <div class="form-group">
+            <label data-ar="عدد الطوابق" data-en="Number of Floors">عدد الطوابق</label>
+            <input type="number" id="numFloors" min="1" max="100" value="1" onchange="generateFloorInputs()" />
+          </div>
+          <div class="form-group">
+            <label data-ar="طوابق الطابق السفلي (B)" data-en="Basement Floors (B)">طوابق تحت الأرض</label>
+            <input type="number" id="numBasement" min="0" max="10" value="0" onchange="generateFloorInputs()" />
+          </div>
+          <div class="form-group">
+            <label data-ar="متوسط ارتفاع الطابق (م)" data-en="Avg Floor Height (m)">متوسط ارتفاع الطابق (م)</label>
+            <input type="number" id="floorHeight" min="2.5" max="20" value="3" step="0.5" />
+          </div>
+          <div class="form-group">
+            <label data-ar="نوع المبنى" data-en="Building Type">نوع المبنى</label>
+            <select id="buildingType">
+              <option value="residential" data-ar="سكني" data-en="Residential">سكني</option>
+              <option value="commercial" data-ar="تجاري" data-en="Commercial">تجاري</option>
+              <option value="industrial" data-ar="صناعي" data-en="Industrial">صناعي</option>
+              <option value="educational" data-ar="تعليمي" data-en="Educational">تعليمي</option>
+              <option value="healthcare" data-ar="صحي" data-en="Healthcare">صحي</option>
+              <option value="government" data-ar="حكومي" data-en="Government">حكومي</option>
+              <option value="mixed" data-ar="متعدد الاستخدام" data-en="Mixed Use">متعدد الاستخدام</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-ar="المعيار المعتمد" data-en="Applied Standard">المعيار المعتمد</label>
+            <select id="projectStandard">
+              <option value="IEC62676">IEC 62676 (CCTV International)</option>
+              <option value="EN50132">EN 50132 (European)</option>
+              <option value="ANSI735">ANSI/SIA CCTV 735</option>
+              <option value="NFPA72">NFPA 72 (Fire/Security)</option>
+              <option value="BS8418">BS 8418 (British)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floor-by-floor input -->
+      <div class="card mt-20" id="floorInputsCard">
+        <h3 class="card-title" data-ar="تفاصيل كل طابق" data-en="Per-Floor Details">تفاصيل كل طابق</h3>
+        <p class="hint" data-ar="حدد عدد الكاميرات في كل طابق ونوعها" data-en="Set camera count and type per floor">حدد عدد الكاميرات في كل طابق ونوعها</p>
+        <div id="floorInputsContainer"></div>
+        <button class="btn-primary mt-20" onclick="generateFloorInputs()">
+          <span data-ar="تحديث الطوابق" data-en="Update Floors">تحديث الطوابق</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ====== TAB: CAMERAS ====== -->
+    <section class="tab-content" id="tab-cameras">
+      <div class="section-header">
+        <h2 data-ar="إعداد الكاميرات" data-en="Camera Configuration">إعداد الكاميرات</h2>
+        <p class="section-desc" data-ar="حدد براندات الكاميرات وأنواعها حسب المعايير العالمية" data-en="Select camera brands and types per international standards">حدد براندات الكاميرات وأنواعها حسب المعايير العالمية</p>
+      </div>
+      <div class="card-grid two-col">
+        <div class="card">
+          <h3 class="card-title" data-ar="البراند الرئيسي" data-en="Main Brand">البراند الرئيسي</h3>
+          <div class="form-group">
+            <label data-ar="ماركة الكاميرات" data-en="Camera Brand">ماركة الكاميرات</label>
+            <select id="cameraBrand" onchange="updateCameraModels()">
+              <optgroup label="Tier 1 – Enterprise">
+                <option value="Axis">Axis Communications (Sweden)</option>
+                <option value="Bosch">Bosch Security Systems (Germany)</option>
+                <option value="Sony">Sony Professional (Japan)</option>
+                <option value="Hanwha">Hanwha Vision / Samsung (Korea)</option>
+                <option value="Avigilon">Avigilon / Motorola Solutions (USA)</option>
+              </optgroup>
+              <optgroup label="Tier 2 – Professional">
+                <option value="Hikvision">Hikvision (China)</option>
+                <option value="Dahua">Dahua Technology (China)</option>
+                <option value="Uniview">Uniview / UNV (China)</option>
+                <option value="CP-Plus">CP Plus (India/USA)</option>
+                <option value="Pelco">Pelco (USA)</option>
+                <option value="Genetec">Genetec (Canada)</option>
+              </optgroup>
+              <optgroup label="Tier 3 – Standard">
+                <option value="Reolink">Reolink</option>
+                <option value="Amcrest">Amcrest</option>
+                <option value="Vivotek">Vivotek (Taiwan)</option>
+                <option value="Other">Other / Custom</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-ar="نظام التسجيل" data-en="Recording System">نظام التسجيل (NVR/DVR/Hybrid)</label>
+            <select id="recordingSystem">
+              <option value="NVR">NVR – Network Video Recorder (IP)</option>
+              <option value="DVR">DVR – Digital Video Recorder (Analog)</option>
+              <option value="Hybrid">Hybrid NVR/DVR</option>
+              <option value="Cloud">Cloud-based VMS</option>
+              <option value="VMS">VMS Server (Enterprise)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-ar="دقة الكاميرا الافتراضية" data-en="Default Resolution">الدقة الافتراضية</label>
+            <select id="defaultResolution">
+              <option value="2MP">2MP – 1080p Full HD</option>
+              <option value="4MP">4MP – 2K</option>
+              <option value="5MP">5MP – Super HD</option>
+              <option value="8MP">8MP – 4K Ultra HD</option>
+              <option value="12MP">12MP – 4K+</option>
+              <option value="Analog-AHD">Analog AHD 2MP</option>
+              <option value="Analog-HD">Analog HD-CVI/TVI 4MP</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title" data-ar="أنواع الكاميرات المستخدمة" data-en="Camera Types Used">أنواع الكاميرات المستخدمة</h3>
+          <div id="cameraTypesContainer">
+            <div class="camera-type-row">
+              <div class="type-badge indoor">داخلي / Indoor</div>
+              <div class="type-controls">
+                <div class="form-group-inline">
+                  <label data-ar="نوع" data-en="Type">نوع</label>
+                  <select class="cam-type-select" data-location="indoor">
+                    <option value="Dome">Dome</option>
+                    <option value="Bullet">Bullet</option>
+                    <option value="PTZ">PTZ</option>
+                    <option value="Fisheye">Fisheye / 360°</option>
+                    <option value="Mini-Dome">Mini Dome</option>
+                    <option value="Covert">Covert / Pinhole</option>
+                  </select>
+                </div>
+                <div class="form-group-inline">
+                  <label data-ar="IR (م)" data-en="IR (m)">IR (م)</label>
+                  <input type="number" class="cam-ir" value="30" min="10" max="200" />
+                </div>
+                <div class="form-group-inline">
+                  <label data-ar="IP Rating" data-en="IP Rating">IP Rating</label>
+                  <select class="cam-ip">
+                    <option value="IP42">IP42</option>
+                    <option value="IP54">IP54</option>
+                    <option value="IP65">IP65</option>
+                    <option value="IP66">IP66</option>
+                    <option value="IP67">IP67</option>
+                    <option value="IP68">IP68</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="camera-type-row mt-10">
+              <div class="type-badge outdoor">خارجي / Outdoor</div>
+              <div class="type-controls">
+                <div class="form-group-inline">
+                  <label data-ar="نوع" data-en="Type">نوع</label>
+                  <select class="cam-type-select" data-location="outdoor">
+                    <option value="Bullet">Bullet</option>
+                    <option value="Dome">Dome</option>
+                    <option value="PTZ">PTZ</option>
+                    <option value="Turret">Turret</option>
+                    <option value="Box">Box Camera</option>
+                    <option value="Thermal">Thermal</option>
+                    <option value="LPR">LPR / ANPR</option>
+                  </select>
+                </div>
+                <div class="form-group-inline">
+                  <label>IR (م)</label>
+                  <input type="number" class="cam-ir" value="50" min="10" max="300" />
+                </div>
+                <div class="form-group-inline">
+                  <label>IP Rating</label>
+                  <select class="cam-ip">
+                    <option value="IP66" selected>IP66</option>
+                    <option value="IP67">IP67</option>
+                    <option value="IP68">IP68</option>
+                    <option value="IK10">IK10 Vandal-proof</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary cards -->
+      <div class="card mt-20" id="cameraSummaryCard">
+        <h3 class="card-title" data-ar="ملخص الكاميرات" data-en="Camera Summary">ملخص الكاميرات</h3>
+        <div class="stats-row" id="cameraSummaryStats">
+          <div class="stat-box">
+            <div class="stat-num" id="totalCams">0</div>
+            <div class="stat-label" data-ar="إجمالي الكاميرات" data-en="Total Cameras">إجمالي الكاميرات</div>
+          </div>
+          <div class="stat-box indoor-stat">
+            <div class="stat-num" id="indoorCams">0</div>
+            <div class="stat-label" data-ar="داخلية" data-en="Indoor">داخلية</div>
+          </div>
+          <div class="stat-box outdoor-stat">
+            <div class="stat-num" id="outdoorCams">0</div>
+            <div class="stat-label" data-ar="خارجية" data-en="Outdoor">خارجية</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num" id="totalNVR">0</div>
+            <div class="stat-label" data-ar="عدد NVR/DVR" data-en="NVR/DVR Count">عدد NVR/DVR</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== TAB: RACKS ====== -->
+    <section class="tab-content" id="tab-racks">
+      <div class="section-header">
+        <h2 data-ar="توزيع الركات والمعدات" data-en="Rack Distribution & Equipment">توزيع الركات والمعدات</h2>
+        <p class="section-desc" data-ar="حسب معيار EIA-310-D / IEC 60297 للأبعاد القياسية" data-en="Per EIA-310-D / IEC 60297 standard dimensions">حسب معيار EIA-310-D / IEC 60297 للأبعاد القياسية</p>
+      </div>
+
+      <!-- ROW 1: Strategy + Rack Specs -->
+      <div class="card-grid two-col">
+
+        <!-- Strategy -->
+        <div class="card">
+          <h3 class="card-title">📐 استراتيجية التوزيع | Distribution Strategy</h3>
+          <div class="form-group">
+            <label>نمط توزيع الركات</label>
+            <select id="rackStrategy" onchange="updateRackStrategy()">
+              <option value="per-floor">رك لكل طابق منفرد</option>
+              <option value="per-2floors">رك مشترك لكل طابقين</option>
+              <option value="per-3floors">رك مشترك لكل 3 طوابق</option>
+              <option value="per-5floors">رك مشترك لكل 5 طوابق</option>
+              <option value="central">رك مركزي واحد (Central)</option>
+              <option value="custom">توزيع مخصص (Custom)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>موقع الرك في الطابق</label>
+            <select id="rackLocation">
+              <option value="electrical-room">غرفة كهربائية / Electrical Room</option>
+              <option value="server-room">غرفة سيرفر / Server Room</option>
+              <option value="security-room">غرفة أمن / Security Control Room</option>
+              <option value="corridor">ممر / Corridor (Wall-Mount)</option>
+              <option value="rooftop">سطح / Rooftop</option>
+              <option value="basement">قبو / Basement MDF Room</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>مدة الأرشفة (أيام) – H.265</label>
+            <input type="number" id="archiveDays" value="30" min="7" max="365" />
+          </div>
+          <div class="form-group">
+            <label>استطاعة NVR لكل ريكورد (قنوات)</label>
+            <select id="nvrChannels">
+              <option value="8">8 قنوات</option>
+              <option value="16" selected>16 قناة (الأكثر شيوعاً)</option>
+              <option value="32">32 قناة</option>
+              <option value="64">64 قناة</option>
+              <option value="128">128 قناة (Enterprise)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Rack Physical Specs - EIA-310-D -->
+        <div class="card">
+          <h3 class="card-title">🗄️ مواصفات الرك – EIA-310-D / IEC 60297</h3>
+          <div class="form-group">
+            <label>نوع الرك</label>
+            <select id="rackType" onchange="updateRackDimensions()">
+              <optgroup label="Full-Size Racks (Floor-Standing)">
+                <option value="42U-open"   data-h="2000" data-w="600" data-d="600" data-u="42" data-load="1000">42U Open Frame – 2000×600×600mm</option>
+                <option value="42U-closed" data-h="2000" data-w="600" data-d="1000" data-u="42" data-load="1000">42U Closed (Glass Door) – 2000×600×1000mm</option>
+                <option value="45U-closed" data-h="2133" data-w="600" data-d="1070" data-u="45" data-load="1360">45U Closed – 2133×600×1070mm (Standard Telecom)</option>
+                <option value="47U"        data-h="2222" data-w="600" data-d="1070" data-u="47" data-load="1360">47U – 2222×600×1070mm</option>
+                <option value="48U"        data-h="2266" data-w="600" data-d="1200" data-u="48" data-load="1500">48U – 2266×600×1200mm (Heavy Duty)</option>
+              </optgroup>
+              <optgroup label="Mid-Size Racks">
+                <option value="36U"  data-h="1752" data-w="600" data-d="900" data-u="36" data-load="800">36U – 1752×600×900mm</option>
+                <option value="32U"  data-h="1588" data-w="600" data-d="900" data-u="32" data-load="800">32U – 1588×600×900mm</option>
+                <option value="27U"  data-h="1344" data-w="600" data-d="800" data-u="27" data-load="700">27U – 1344×600×800mm</option>
+                <option value="24U"  data-h="1200" data-w="600" data-d="800" data-u="24" data-load="600">24U – 1200×600×800mm</option>
+              </optgroup>
+              <optgroup label="Wall-Mount Racks">
+                <option value="12U-wall" data-h="635" data-w="540" data-d="450" data-u="12" data-load="60">12U Wall-Mount – 635×540×450mm</option>
+                <option value="9U-wall"  data-h="500" data-w="540" data-d="400" data-u="9"  data-load="60">9U Wall-Mount – 500×540×400mm</option>
+                <option value="6U-wall"  data-h="368" data-w="540" data-d="350" data-u="6"  data-load="50">6U Wall-Mount – 368×540×350mm</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <!-- Live Dimensions Display -->
+          <div class="rack-dims-display" id="rackDimsDisplay">
+            <div class="dim-grid">
+              <div class="dim-box"><span class="dim-val" id="dimU">42</span><span class="dim-lbl">Unit (U)</span></div>
+              <div class="dim-box"><span class="dim-val" id="dimH">2000</span><span class="dim-lbl">Height (mm)</span></div>
+              <div class="dim-box"><span class="dim-val" id="dimW">600</span><span class="dim-lbl">Width (mm)</span></div>
+              <div class="dim-box"><span class="dim-val" id="dimD">600</span><span class="dim-lbl">Depth (mm)</span></div>
+              <div class="dim-box"><span class="dim-val" id="dimLoad">1000</span><span class="dim-lbl">Max Load (kg)</span></div>
+              <div class="dim-box"><span class="dim-val" id="dimUsable">–</span><span class="dim-lbl">Usable U</span></div>
+            </div>
+            <div class="info-box" style="margin-top:10px">
+              <div class="info-icon">📏</div>
+              <div class="info-text">1U = 44.45mm (1.75") | عرض القضيب 19" (482.6mm) حسب EIA-310-D</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROW 2: Rack Contents + UPS -->
+      <div class="card-grid two-col mt-20">
+
+        <!-- Rack Contents -->
+        <div class="card">
+          <h3 class="card-title">🔧 محتويات الرك القياسي</h3>
+          <div class="rack-item-list">
+            <div class="rack-item">
+              <span class="rack-item-name">NVR / DVR Recorder</span>
+              <input type="number" class="rack-qty" value="1" min="0" max="10" data-item="NVR" data-u="2" />
+              <span class="rack-unit">2U</span>
+            </div>
+            <div class="rack-item">
+              <span class="rack-item-name">PoE Switch 24-port (IEEE 802.3at)</span>
+              <input type="number" class="rack-qty" value="1" min="0" max="10" data-item="PoE-Switch" data-u="1" />
+              <span class="rack-unit">1U</span>
+            </div>
+            <div class="rack-item">
+              <span class="rack-item-name">Core Switch / Uplink</span>
+              <input type="number" class="rack-qty" value="0" min="0" max="4" data-item="Core-Switch" data-u="1" />
+              <span class="rack-unit">1U</span>
+            </div>
+            <div class="rack-item">
+              <span class="rack-item-name">Patch Panel 24-port (Cat6A)</span>
+              <input type="number" class="rack-qty" value="1" min="0" max="10" data-item="Patch-Panel" data-u="1" />
+              <span class="rack-unit">1U</span>
+            </div>
+            <div class="rack-item">
+              <span class="rack-item-name">Cable Management 1U</span>
+              <input type="number" class="rack-qty" value="2" min="0" max="10" data-item="Cable-Mgmt" data-u="1" />
+              <span class="rack-unit">1U</span>
+            </div>
+            <div class="rack-item">
+              <span class="rack-item-name">KVM Console 1U</span>
+              <input type="number" class="rack-qty" value="0" min="0" max="2" data-item="KVM" data-u="1" />
+              <span class="rack-unit">1U</span>
+            </div>
+            <div class="rack-item">
+              <span class="rack-item-name">Video Wall Controller</span>
+              <input type="number" class="rack-qty" value="0" min="0" max="4" data-item="VW-Controller" data-u="2" />
+              <span class="rack-unit">2U</span>
+            </div>
+            <div class="rack-item">
+              <span class="rack-item-name">PDU (Power Distribution Unit)</span>
+              <input type="number" class="rack-qty" value="1" min="0" max="4" data-item="PDU" data-u="1" />
+              <span class="rack-unit">1U</span>
+            </div>
+            <div class="rack-item">
+              <span class="rack-item-name">Blank Panel (spare U)</span>
+              <input type="number" class="rack-qty" value="4" min="0" max="20" data-item="Blank" data-u="1" />
+              <span class="rack-unit">1U</span>
+            </div>
+          </div>
+          <!-- U utilization live -->
+          <div class="u-util-bar mt-15" id="uUtilBar">
+            <div class="u-util-header">
+              <span>استخدام الرك</span>
+              <span id="uUtilText">0 / 42 U</span>
+            </div>
+            <div class="u-bar-bg"><div class="u-bar-fill" id="uBarFill" style="width:0%"></div></div>
+          </div>
+        </div>
+
+        <!-- UPS Section - FULL STANDARDS -->
+        <div class="card">
+          <h3 class="card-title">⚡ UPS – نظام الطاقة الاحتياطية</h3>
+
+          <!-- UPS Topology -->
+          <div class="form-group">
+            <label>نظام UPS</label>
+            <select id="upsSystem" onchange="toggleUPSOptions()">
+              <option value="per-rack">UPS محلي لكل رك (Per-Rack UPS)</option>
+              <option value="central">UPS مركزي واحد (Central / Room UPS)</option>
+              <option value="none">بدون UPS (مصدر طاقة عادي)</option>
+            </select>
+          </div>
+
+          <!-- Per-Rack UPS Options -->
+          <div id="perRackUPSOptions">
+            <div class="form-group">
+              <label>استطاعة UPS لكل رك</label>
+              <select id="upsCapacityPerRack">
+                <optgroup label="Small Rack UPS (Line-Interactive – IEC 62040-3 Class II)">
+                  <option value="650"  data-u="1" data-w="390"  data-runtime="10">650 VA / 390W – 1U (10 دقيقة احتياط)</option>
+                  <option value="1000" data-u="2" data-w="600"  data-runtime="10">1000 VA / 600W – 2U (10 دقيقة)</option>
+                  <option value="1500" data-u="2" data-w="900"  data-runtime="10" selected>1500 VA / 900W – 2U (10 دقيقة) ⭐ الأكثر شيوعاً</option>
+                  <option value="2000" data-u="2" data-w="1200" data-runtime="8">2000 VA / 1200W – 2U (8 دقائق)</option>
+                  <option value="3000" data-u="2" data-w="2100" data-runtime="6">3000 VA / 2100W – 2U (6 دقائق)</option>
+                </optgroup>
+                <optgroup label="Tower UPS (On-Line Double Conversion – IEC 62040-3 Class I)">
+                  <option value="6000" data-u="5" data-w="5400" data-runtime="5">6 KVA / 5.4 KW – 5U (On-Line)</option>
+                  <option value="10000" data-u="6" data-w="9000" data-runtime="5">10 KVA / 9 KW – 6U (On-Line)</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>مدة الاحتياط المطلوبة (دقيقة)</label>
+              <select id="upsRuntimePerRack">
+                <option value="5">5 دقائق (بداية مولد)</option>
+                <option value="10" selected>10 دقائق ⭐ (IEC/BS EN 62040 الموصى)</option>
+                <option value="15">15 دقيقة</option>
+                <option value="30">30 دقيقة</option>
+                <option value="60">60 دقيقة (1 ساعة)</option>
+                <option value="120">120 دقيقة (مشاريع حكومية)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>براند UPS</label>
+              <select id="upsBrand">
+                <optgroup label="Tier 1">
+                  <option value="APC">APC by Schneider Electric (USA)</option>
+                  <option value="Eaton">Eaton (USA/Ireland)</option>
+                  <option value="Vertiv">Vertiv / Liebert (USA)</option>
+                </optgroup>
+                <optgroup label="Tier 2">
+                  <option value="Socomec">Socomec (France)</option>
+                  <option value="Riello">Riello UPS (Italy)</option>
+                  <option value="PowerWalker">PowerWalker / Bluewalker</option>
+                  <option value="CyberPower">CyberPower (Taiwan)</option>
+                  <option value="Numeric">Numeric (India)</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+
+          <!-- Central UPS Options -->
+          <div id="centralUPSOptions" style="display:none">
+            <div class="ups-central-banner">
+              <span>🏢 UPS مركزي – يغذي جميع الركات من نقطة واحدة</span>
+            </div>
+            <div class="form-group">
+              <label>استطاعة UPS المركزي</label>
+              <select id="upsCapacityCentral">
+                <optgroup label="3-Phase On-Line UPS (IEC 62040-3 Class I – Double Conversion)">
+                  <option value="10">10 KVA / 9 KW (مشاريع صغيرة)</option>
+                  <option value="15">15 KVA / 13.5 KW</option>
+                  <option value="20" selected>20 KVA / 18 KW ⭐ (متوسط)</option>
+                  <option value="30">30 KVA / 27 KW</option>
+                  <option value="40">40 KVA / 36 KW</option>
+                  <option value="60">60 KVA / 54 KW (مباني كبيرة)</option>
+                  <option value="80">80 KVA / 72 KW</option>
+                  <option value="100">100 KVA / 90 KW (Enterprise)</option>
+                  <option value="160">160 KVA / 144 KW (Data Center)</option>
+                  <option value="200">200 KVA / 180 KW (Large Campus)</option>
+                </optgroup>
+                <optgroup label="Modular UPS (Scalable)">
+                  <option value="mod-20">20 KVA Modular (قابل للتوسعة)</option>
+                  <option value="mod-60">60 KVA Modular</option>
+                  <option value="mod-120">120 KVA Modular</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>مدة الاحتياط</label>
+              <select id="upsRuntimeCentral">
+                <option value="10">10 دقائق (مع مولد)</option>
+                <option value="30">30 دقيقة</option>
+                <option value="60" selected>60 دقيقة ⭐ (حكومي/مؤسسي)</option>
+                <option value="120">120 دقيقة</option>
+                <option value="240">240 دقيقة (4 ساعات)</option>
+                <option value="480">8 ساعات (مشاريع نفطية/عسكرية)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>توصيل UPS المركزي</label>
+              <select id="upsCentralFeed">
+                <option value="single">Single Feed – مصدر واحد</option>
+                <option value="dual">Dual Feed – مصدر مزدوج (Redundant)</option>
+                <option value="parallel">Parallel Redundant (N+1) – موثوقية عالية</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>براند UPS المركزي</label>
+              <select id="upsBrandCentral">
+                <option value="APC-Galaxy">APC Galaxy (Schneider) – 3-Phase</option>
+                <option value="Eaton-9E">Eaton 9E / 9PX – 3-Phase</option>
+                <option value="Vertiv-GXT">Vertiv Liebert GXT</option>
+                <option value="ABB">ABB PowerValue</option>
+                <option value="Huawei-UPS">Huawei UPS5000-E</option>
+                <option value="Socomec-Delphys">Socomec Delphys</option>
+              </select>
+            </div>
+            <div class="info-box">
+              <div class="info-icon">⚡</div>
+              <div class="info-text">
+                UPS مركزي 3-Phase يتوافق مع IEC 62040-3 Class I (Double Conversion Online).
+                يُنصح بـ N+1 Redundancy للمشاريع الحيوية حسب TIA-942 Tier II+.
+                يُغذى من لوحة كهربائية مخصصة مع ATS (Automatic Transfer Switch).
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rack Summary -->
+      <div class="card mt-20" id="rackSummaryCard">
+        <h3 class="card-title">📊 ملخص الركات المحسوب | Calculated Rack Summary</h3>
+        <div id="rackSummaryContent">
+          <p class="hint">اضغط الزر أدناه لحساب الركات بعد إدخال بيانات الطوابق</p>
+        </div>
+        <button class="btn-primary mt-15" onclick="calculateRacks()">
+          <span>⚙️ احسب الركات والـ UPS</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ====== TAB: CABLES ====== -->
+    <section class="tab-content" id="tab-cables">
+      <div class="section-header">
+        <h2 data-ar="الكابلات والأسلاك" data-en="Cables & Wiring">الكابلات والأسلاك</h2>
+        <p class="section-desc" data-ar="حساب أطوال الكابلات حسب المعايير العالمية" data-en="Calculate cable lengths per international standards">حساب أطوال الكابلات حسب المعايير العالمية</p>
+      </div>
+      <div class="card-grid two-col">
+        <div class="card">
+          <h3 class="card-title" data-ar="نوع الكابل الرئيسي" data-en="Main Cable Type">نوع الكابل الرئيسي</h3>
+          <div class="form-group">
+            <label data-ar="نوع الكابل لكاميرات IP" data-en="IP Camera Cable Type">كاميرات IP (Network)</label>
+            <select id="ipCableType">
+              <option value="Cat6">Cat6 – UTP (Standard, up to 100m)</option>
+              <option value="Cat6A">Cat6A – UTP/STP (up to 100m, 10GbE)</option>
+              <option value="Cat6A-STP">Cat6A – STP Shielded (Industrial)</option>
+              <option value="Cat7">Cat7 – SFTP (High Shielding, up to 100m)</option>
+              <option value="Cat8">Cat8 – 40GbE (Data Center)</option>
+              <option value="Fiber-OM3">Fiber Optic OM3 (Multi-mode)</option>
+              <option value="Fiber-SM">Fiber Optic SM (Single-mode, long dist.)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-ar="كابل كاميرات أنالوغ" data-en="Analog Camera Cable">كاميرات أنالوغ</label>
+            <select id="analogCableType">
+              <option value="RG59">RG59 – Coaxial (up to 300m)</option>
+              <option value="RG6">RG6 – Coaxial (up to 450m)</option>
+              <option value="RG11">RG11 – Coaxial (up to 900m)</option>
+              <option value="Siamese">Siamese Cable (RG59+Power)</option>
+              <option value="Twisted-Pair">Twisted Pair (Balun)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-ar="كابل الطاقة" data-en="Power Cable">كابل الطاقة (PoE / 12V)</label>
+            <select id="powerCableType">
+              <option value="PoE">PoE – Power over Ethernet (IEEE 802.3af)</option>
+              <option value="PoE+">PoE+ – 30W (IEEE 802.3at)</option>
+              <option value="PoE++">PoE++ – 90W (IEEE 802.3bt)</option>
+              <option value="12VDC">12V DC (Separate adapter)</option>
+              <option value="24VAC">24V AC</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-ar="براند الكابل" data-en="Cable Brand">براند الكابل</label>
+            <select id="cableBrand">
+              <optgroup label="Premium">
+                <option value="Belden">Belden (USA)</option>
+                <option value="CommScope">CommScope (USA)</option>
+                <option value="Panduit">Panduit (USA)</option>
+                <option value="Legrand">Legrand (France)</option>
+              </optgroup>
+              <optgroup label="Standard">
+                <option value="Nexans">Nexans</option>
+                <option value="Draka">Draka</option>
+                <option value="Lapp">Lapp Group</option>
+                <option value="LS-Cable">LS Cable (Korea)</option>
+                <option value="Local">Local / Unbranded</option>
+              </optgroup>
+            </select>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title" data-ar="حساب الأطوال" data-en="Length Calculation">حساب الأطوال</h3>
+          <div class="form-group">
+            <label data-ar="متوسط المسافة من الكاميرا للرك (م) - قابل للتعديل" data-en="Avg Distance Camera to Rack (m) – Editable">متوسط المسافة للرك (م) <span class="optional-tag">قابل للتعديل</span></label>
+            <input type="number" id="avgCableLength" value="50" min="5" max="500" step="5" />
+          </div>
+          <div class="form-group">
+            <label data-ar="معامل الهدر (% - مسارات إضافية)" data-en="Waste Factor (% – extra routing)">معامل الهدر % <span class="hint-sm">(TIA-568 يوصي بـ 15%)</span></label>
+            <input type="number" id="wasteFactor" value="15" min="5" max="40" />
+          </div>
+          <div class="form-group">
+            <label data-ar="طول الكابل الأقصى المسموح (م)" data-en="Max Allowed Cable Run (m)">الحد الأقصى للطول (م)</label>
+            <input type="number" id="maxCableRun" value="100" min="10" max="2000" />
+          </div>
+          <div class="info-box">
+            <div class="info-icon">ℹ️</div>
+            <div class="info-text" data-ar="وفق TIA-568-C.2 الحد الأقصى لـ Cat6/6A هو 100م. لمسافات أكبر يُنصح بالألياف الضوئية." data-en="Per TIA-568-C.2, max for Cat6/6A is 100m. For longer runs, fiber is recommended.">وفق TIA-568-C.2 الحد الأقصى لـ Cat6/6A هو 100م. لمسافات أكبر يُنصح بالألياف الضوئية.</div>
+          </div>
+          <button class="btn-primary mt-20" onclick="calculateCables()">
+            <span data-ar="احسب الكابلات" data-en="Calculate Cables">احسب الكابلات</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="card mt-20" id="cableSummaryCard">
+        <h3 class="card-title" data-ar="ملخص الكابلات" data-en="Cable Summary">ملخص الكابلات</h3>
+        <div id="cableSummaryContent">
+          <p class="hint" data-ar="اضغط 'احسب الكابلات' لرؤية النتائج" data-en="Press 'Calculate Cables' to see results">اضغط 'احسب الكابلات' لرؤية النتائج</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== TAB: LABOR ====== -->
+    <section class="tab-content" id="tab-labor">
+      <div class="section-header">
+        <h2 data-ar="حساب العمالة وأيام العمل" data-en="Labor & Workdays Calculation">حساب العمالة وأيام العمل</h2>
+        <p class="section-desc" data-ar="تقدير أيام العمل بناءً على عدد الكاميرات والفريق" data-en="Estimate workdays based on camera count and team">تقدير أيام العمل بناءً على عدد الكاميرات والفريق <span class="optional-tag" data-ar="قابل للتعديل" data-en="Editable">قابل للتعديل</span></p>
+      </div>
+      <div class="card-grid two-col">
+        <div class="card">
+          <h3 class="card-title" data-ar="إعداد الفريق" data-en="Team Setup">إعداد الفريق</h3>
+          <div class="form-group">
+            <label data-ar="عدد أفراد الفريق" data-en="Team Size">عدد أفراد الفريق</label>
+            <input type="number" id="teamSize" value="4" min="1" max="50" onchange="calculateLabor()" />
+          </div>
+          <div class="form-group">
+            <label data-ar="ساعات العمل اليومية" data-en="Daily Working Hours">ساعات العمل اليومية</label>
+            <input type="number" id="workHoursPerDay" value="8" min="4" max="12" onchange="calculateLabor()" />
+          </div>
+          <div class="form-group">
+            <label data-ar="مستوى الصعوبة" data-en="Difficulty Level">مستوى صعوبة الموقع</label>
+            <select id="difficultyLevel" onchange="calculateLabor()">
+              <option value="1.0">سهل – مبنى جديد مع مسارات جاهزة (×1.0)</option>
+              <option value="1.2" selected>متوسط – مبنى قائم (×1.2)</option>
+              <option value="1.5">صعب – تجديد بمبنى مشغول (×1.5)</option>
+              <option value="1.8">صعب جداً – ارتفاعات / بيئة صناعية (×1.8)</option>
+              <option value="2.0">استثنائي – كل الظروف الصعبة (×2.0)</option>
+            </select>
+          </div>
+        </div>
+        <div class="card">
+          <h3 class="card-title" data-ar="معدلات الإنجاز" data-en="Productivity Rates">معدلات الإنجاز <span class="optional-tag">قابلة للتعديل</span></h3>
+          <div class="rate-item">
+            <label data-ar="تركيب كاميرا + تثبيت (ساعة/كاميرا)" data-en="Camera install (hr/cam)">تركيب كاميرا (ساعة/كاميرا)</label>
+            <input type="number" id="rateInstallCam" value="1.5" min="0.5" max="8" step="0.25" onchange="calculateLabor()" />
+          </div>
+          <div class="rate-item">
+            <label data-ar="مد كابل (ساعة/100م)" data-en="Cable pull (hr/100m)">مد كابل (ساعة/100م)</label>
+            <input type="number" id="rateCablePull" value="2" min="0.5" max="10" step="0.5" onchange="calculateLabor()" />
+          </div>
+          <div class="rate-item">
+            <label data-ar="تركيب رك + توصيل (ساعة/رك)" data-en="Rack install (hr/rack)">تركيب رك (ساعة/رك)</label>
+            <input type="number" id="rateRackInstall" value="4" min="1" max="16" step="0.5" onchange="calculateLabor()" />
+          </div>
+          <div class="rate-item">
+            <label data-ar="برمجة + اختبار (ساعة/كاميرا)" data-en="Config & Test (hr/cam)">برمجة واختبار (ساعة/كاميرا)</label>
+            <input type="number" id="rateConfig" value="0.5" min="0.1" max="4" step="0.1" onchange="calculateLabor()" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt-20">
+        <h3 class="card-title" data-ar="نتائج حساب العمالة" data-en="Labor Calculation Results">نتائج حساب العمالة</h3>
+        <div class="stats-row" id="laborStats">
+          <div class="stat-box">
+            <div class="stat-num" id="totalHours">–</div>
+            <div class="stat-label" data-ar="إجمالي الساعات" data-en="Total Hours">إجمالي الساعات</div>
+          </div>
+          <div class="stat-box highlight">
+            <div class="stat-num" id="totalDays">–</div>
+            <div class="stat-label" data-ar="أيام العمل" data-en="Workdays">أيام العمل</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num" id="installHours">–</div>
+            <div class="stat-label" data-ar="ساعات التركيب" data-en="Install Hours">ساعات التركيب</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num" id="cableHours">–</div>
+            <div class="stat-label" data-ar="ساعات الكابلات" data-en="Cable Hours">ساعات الكابلات</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num" id="configHours">–</div>
+            <div class="stat-label" data-ar="ساعات البرمجة" data-en="Config Hours">ساعات البرمجة</div>
+          </div>
+        </div>
+        <div id="laborBreakdownTable"></div>
+        <button class="btn-primary mt-15" onclick="calculateLabor()">
+          <span data-ar="إعادة الحساب" data-en="Recalculate">إعادة الحساب</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ====== TAB: FLOOR PLAN ====== -->
+    <section class="tab-content" id="tab-floorplan">
+      <div class="section-header">
+        <h2 data-ar="مخطط الطابق وتوزيع الكاميرات" data-en="Floor Plan & Camera Placement">مخطط الطابق وتوزيع الكاميرات</h2>
+        <p class="section-desc" data-ar="ارفع مخطط PDF/صورة وحدد مواقع الكاميرات بالنقر" data-en="Upload floor plan PDF/image and click to place cameras">ارفع مخطط PDF/صورة وحدد مواقع الكاميرات بالنقر</p>
+      </div>
+      <div class="card">
+        <div class="floorplan-toolbar">
+          <div class="toolbar-group">
+            <label class="upload-btn" for="floorplanUpload">
+              <span>📁</span>
+              <span data-ar="رفع مخطط" data-en="Upload Plan">رفع مخطط</span>
+              <input type="file" id="floorplanUpload" accept="image/*,application/pdf" style="display:none" onchange="loadFloorplan(this)" />
+            </label>
+            <select id="floorSelector" class="floor-select">
+              <option value="0">الطابق الأرضي</option>
+            </select>
+          </div>
+          <div class="toolbar-group tool-btns">
+            <button class="tool-btn active" id="toolCamera" onclick="setTool('camera')" title="Place Camera">
+              📷 <span data-ar="كاميرا داخلي" data-en="Indoor Cam">كاميرا داخلي</span>
+            </button>
+            <button class="tool-btn" id="toolCameraOut" onclick="setTool('camera-outdoor')" title="Outdoor Camera">
+              🏠 <span data-ar="كاميرا خارجي" data-en="Outdoor Cam">كاميرا خارجي</span>
+            </button>
+            <button class="tool-btn" id="toolRack" onclick="setTool('rack')" title="Place Rack">
+              🗄️ <span data-ar="رك" data-en="Rack">رك</span>
+            </button>
+            <button class="tool-btn" id="toolEraser" onclick="setTool('eraser')" title="Erase">
+              🗑️ <span data-ar="حذف" data-en="Erase">حذف</span>
+            </button>
+            <button class="tool-btn" id="toolSelect" onclick="setTool('select')" title="Select">
+              🖱️ <span data-ar="تحديد" data-en="Select">تحديد</span>
+            </button>
+          </div>
+          <div class="toolbar-group">
+            <button class="btn-sm" onclick="clearCanvas()">🧹 <span data-ar="مسح الكل" data-en="Clear All">مسح الكل</span></button>
+            <button class="btn-sm" onclick="exportFloorplanPNG()">💾 <span data-ar="تصدير PNG" data-en="Export PNG">تصدير PNG</span></button>
+          </div>
+        </div>
+        <div class="canvas-wrapper">
+          <canvas id="floorplanCanvas"></canvas>
+          <div class="canvas-placeholder" id="canvasPlaceholder">
+            <div class="placeholder-icon">🗺️</div>
+            <p data-ar="ارفع مخطط الطابق أو ابدأ بالنقر لتحديد مواقع الكاميرات" data-en="Upload a floor plan or click to start placing cameras">ارفع مخطط الطابق أو ابدأ بالنقر لتحديد مواقع الكاميرات</p>
+          </div>
+        </div>
+        <div class="floorplan-legend">
+          <div class="legend-item"><span class="legend-dot indoor-dot"></span><span data-ar="كاميرا داخلية" data-en="Indoor Camera">كاميرا داخلية</span></div>
+          <div class="legend-item"><span class="legend-dot outdoor-dot"></span><span data-ar="كاميرا خارجية" data-en="Outdoor Camera">كاميرا خارجية</span></div>
+          <div class="legend-item"><span class="legend-dot rack-dot"></span><span data-ar="رك" data-en="Rack">رك</span></div>
+        </div>
+        <div class="floorplan-count" id="floorplanCount">
+          <span data-ar="كاميرات على المخطط:" data-en="Cameras on plan:">كاميرات على المخطط:</span> <strong id="fpCamCount">0</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== TAB: REPORT ====== -->
+    <section class="tab-content" id="tab-report">
+      <div class="section-header">
+        <h2 data-ar="التقارير والتصدير" data-en="Reports & Export">التقارير والتصدير</h2>
+        <p class="section-desc" data-ar="توليد تقارير احترافية بالعربي والإنكليزي" data-en="Generate professional reports in Arabic and English">توليد تقارير احترافية بالعربي والإنكليزي</p>
+      </div>
+
+      <!-- Preview -->
+      <div class="card mb-20">
+        <h3 class="card-title" data-ar="معاينة التقرير" data-en="Report Preview">معاينة التقرير</h3>
+        <div id="reportPreview" class="report-preview">
+          <div class="report-preview-header">
+            <div class="rp-logo">
+              <svg width="60" height="60" viewBox="0 0 60 60" fill="none"><rect width="60" height="60" rx="12" fill="#0a2540"/><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="#00c6ff" font-family="Rajdhani,sans-serif" font-weight="700" font-size="17">EJAF</text></svg>
+            </div>
+            <div class="rp-title-block">
+              <h2 class="rp-company">Ejaf Technology</h2>
+              <h3 class="rp-project" id="rp-projectName">–</h3>
+              <p class="rp-meta" id="rp-meta">–</p>
+            </div>
+            <div class="rp-powered">Powered by<br/><strong>Siwar</strong></div>
+          </div>
+          <div id="reportBody"></div>
+        </div>
+      </div>
+
+      <div class="export-actions">
+        <button class="export-btn pdf-btn" onclick="exportPDF('ar')">
+          <span class="export-icon">📄</span>
+          <span class="export-label" data-ar="تصدير PDF عربي" data-en="Export Arabic PDF">تصدير PDF عربي</span>
+        </button>
+        <button class="export-btn pdf-btn" onclick="exportPDF('en')">
+          <span class="export-icon">📄</span>
+          <span class="export-label" data-ar="تصدير PDF إنكليزي" data-en="Export English PDF">تصدير PDF إنكليزي</span>
+        </button>
+        <button class="export-btn excel-btn" onclick="exportExcel()">
+          <span class="export-icon">📊</span>
+          <span class="export-label" data-ar="تصدير Excel" data-en="Export Excel">تصدير Excel</span>
+        </button>
+        <button class="export-btn" onclick="generateReport()">
+          <span class="export-icon">🔄</span>
+          <span class="export-label" data-ar="تحديث المعاينة" data-en="Refresh Preview">تحديث المعاينة</span>
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    <span>© 2025 <strong>Ejaf Technology</strong> — All Rights Reserved</span>
+    <span class="footer-sep">|</span>
+    <span>Powered by <strong>Siwar</strong></span>
+    <span class="footer-sep">|</span>
+    <span class="footer-std">Standards: IEC 62676 · TIA-568 · EN 50132 · NFPA 72</span>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
