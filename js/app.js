@@ -1549,112 +1549,136 @@ window.generateReport = function() {
   calculateRacks();
   calculateLabor();
 
-  const sc = id => document.getElementById(id)?.checked !== false; // default true
-  const v  = id => document.getElementById(id)?.value || '–';
+  const sc  = id => { const el = document.getElementById(id); return el ? el.checked : true; };
+  const v   = id => document.getElementById(id)?.value || '–';
   const pName = v('projectName'), cName = v('clientName'), date = v('projectDate');
 
-  document.getElementById('rp-projectName').textContent = `تقرير مشروع: ${pName}`;
-  document.getElementById('rp-meta').textContent = `العميل: ${cName} | التاريخ: ${date} | رقم: ${v('projectNumber')}`;
+  // Preview header — English only
+  document.getElementById('rp-projectName').textContent = `Project: ${pName}`;
+  document.getElementById('rp-meta').textContent =
+    `Client: ${cName}  |  Date: ${date}  |  No: ${v('projectNumber')}`;
 
   const floorData = getFloorData().filter(f => f.indoor + f.outdoor > 0);
+
   const upsSys = v('upsSystem');
-  let upsInfo = 'بدون UPS';
-  if (upsSys === 'per-rack') upsInfo = `${v('upsBrand')} – ${document.getElementById('upsCapacityPerRack')?.value || '–'} VA / رك`;
-  else if (upsSys === 'central') upsInfo = `[مركزي] ${v('upsBrandCentral')} – ${document.getElementById('upsCapacityCentral')?.value || '–'} KVA`;
+  let upsInfo = 'No UPS';
+  if (upsSys === 'per-rack')
+    upsInfo = `${v('upsBrand')} – ${document.getElementById('upsCapacityPerRack')?.value||'–'} VA / rack`;
+  else if (upsSys === 'central')
+    upsInfo = `[Central] ${v('upsBrandCentral')} – ${document.getElementById('upsCapacityCentral')?.value||'–'} KVA`;
 
   const rackSel = document.getElementById('rackType');
-  const rOpt = rackSel?.options[rackSel?.selectedIndex];
-  const rackDims = rOpt ? `${rOpt.dataset.u}U – ${rOpt.dataset.h}×${rOpt.dataset.w}×${rOpt.dataset.d}mm` : '–';
+  const rOpt    = rackSel?.options[rackSel?.selectedIndex];
+  const rackDims = rOpt
+    ? `${rOpt.dataset.u}U – ${rOpt.dataset.h}×${rOpt.dataset.w}×${rOpt.dataset.d} mm`
+    : '–';
 
-  // Fiber summary
-  const fb = state.fiber || {};
-  const nw = state.network || {};
-  const vw = state.videowall || {};
+  const fb = state.fiber       || {};
+  const nw = state.network     || {};
+  const vw = state.videowall   || {};
   const cr = state.controlRoom || {};
 
   let html = '';
 
   if (sc('rsc-project')) html += `
-    <div class="rp-section"><h4>📋 معلومات المشروع / Project Information</h4>
+    <div class="rp-section"><h4>📋 Project Information</h4>
       <table class="rp-table">
-        <tr><th>اسم المشروع</th><td>${pName}</td><th>Client</th><td>${cName}</td></tr>
-        <tr><th>الموقع</th><td>${v('projectLocation')}</td><th>Engineer</th><td>${v('engineerName')}</td></tr>
-        <tr><th>رقم المشروع</th><td>${v('projectNumber')}</td><th>Date</th><td>${date}</td></tr>
-        <tr><th>المعيار</th><td>${v('projectStandard')}</td><th>نوع المبنى</th><td>${v('buildingType')}</td></tr>
+        <tr><th>Project Name</th><td>${pName}</td><th>Client</th><td>${cName}</td></tr>
+        <tr><th>Location</th><td>${v('projectLocation')}</td><th>Engineer</th><td>${v('engineerName')}</td></tr>
+        <tr><th>Project No.</th><td>${v('projectNumber')}</td><th>Date</th><td>${date}</td></tr>
+        <tr><th>Standard</th><td>${v('projectStandard')}</td><th>Building Type</th><td>${v('buildingType')}</td></tr>
       </table></div>`;
 
   if (sc('rsc-cameras')) html += `
-    <div class="rp-section"><h4>📷 الكاميرات / Camera Summary</h4>
+    <div class="rp-section"><h4>📷 Camera Summary</h4>
       <table class="rp-table">
-        <tr><th>الإجمالي</th><th>داخلية</th><th>خارجية</th><th>البراند</th><th>الدقة</th><th>نظام التسجيل</th></tr>
+        <tr><th>Total</th><th>Indoor</th><th>Outdoor</th><th>Brand</th><th>Resolution</th><th>Recording</th></tr>
         <tr><td><b>${state.cameras.total}</b></td><td>${state.cameras.indoor}</td><td>${state.cameras.outdoor}</td>
             <td>${v('cameraBrand')}</td><td>${v('defaultResolution')}</td><td>${v('recordingSystem')}</td></tr>
       </table>
       <table class="rp-table" style="margin-top:6px">
-        <tr><th>الطابق</th><th>داخلية</th><th>خارجية</th><th>الإجمالي</th><th>متوسط الكابل</th><th>مجموعة الرك</th></tr>
-        ${floorData.map(f=>`<tr><td>${f.label}</td><td>${f.indoor}</td><td>${f.outdoor}</td><td>${f.indoor+f.outdoor}</td><td>${f.cableLen}م</td><td>${f.rackGroup}</td></tr>`).join('')}
-        <tr style="font-weight:700"><td>الإجمالي</td><td>${state.cameras.indoor}</td><td>${state.cameras.outdoor}</td><td>${state.cameras.total}</td><td>–</td><td>${state.racks.length} ركات</td></tr>
+        <tr><th>Floor</th><th>Indoor</th><th>Outdoor</th><th>Total</th><th>Cable Avg (m)</th><th>Rack Group</th></tr>
+        ${floorData.map(f=>`<tr><td>${f.label}</td><td>${f.indoor}</td><td>${f.outdoor}</td>
+          <td>${f.indoor+f.outdoor}</td><td>${f.cableLen} m</td><td>${f.rackGroup}</td></tr>`).join('')}
+        <tr style="font-weight:700;background:#f0f4f8">
+          <td>TOTAL</td><td>${state.cameras.indoor}</td><td>${state.cameras.outdoor}</td>
+          <td>${state.cameras.total}</td><td>–</td><td>${state.racks.length} racks</td></tr>
       </table></div>`;
 
   if (sc('rsc-racks')) html += `
-    <div class="rp-section"><h4>🗄️ الركات والـ UPS — EIA-310-D</h4>
+    <div class="rp-section"><h4>🗄️ Racks & UPS — EIA-310-D / IEC 60297</h4>
       <table class="rp-table">
-        <tr><th>عدد الركات</th><th>مواصفات الرك</th><th>UPS</th><th>التخزين (H.265)</th></tr>
+        <tr><th>Rack Count</th><th>Rack Spec</th><th>UPS</th><th>Storage (H.265)</th></tr>
         <tr><td>${state.racks.length}</td><td>${rackDims}</td><td>${upsInfo}</td>
             <td>${(state.cameras.total*0.75*(parseInt(v('archiveDays'))||30)/1000).toFixed(2)} TB</td></tr>
       </table></div>`;
 
   if (sc('rsc-cables')) html += `
-    <div class="rp-section"><h4>🔌 الكابلات — TIA-568-C.2</h4>
+    <div class="rp-section"><h4>🔌 Cables — TIA-568-C.2</h4>
       <table class="rp-table">
-        <tr><th>IP Cable (${v('ipCableType')})</th><th>Analog (${v('analogCableType')})</th><th>الإجمالي</th><th>البراند</th><th>الهدر</th></tr>
-        <tr><td>${state.cables.ipLength}م</td><td>${state.cables.analogLength}م</td>
-            <td><b>${state.cables.totalLength}م</b></td><td>${v('cableBrand')}</td><td>${v('wasteFactor')}%</td></tr>
+        <tr><th>IP Cable (${v('ipCableType')})</th><th>Analog (${v('analogCableType')})</th>
+            <th>Total</th><th>Brand</th><th>Waste Factor</th></tr>
+        <tr><td>${state.cables.ipLength} m</td><td>${state.cables.analogLength} m</td>
+            <td><b>${state.cables.totalLength} m</b></td>
+            <td>${v('cableBrand')}</td><td>${v('wasteFactor')}%</td></tr>
       </table></div>`;
 
   if (sc('rsc-fiber') && fb.totalCableLen) html += `
-    <div class="rp-section"><h4>💡 الفايبر أوبتيك — TIA-568.3-D / ITU-T G.652</h4>
+    <div class="rp-section"><h4>💡 Fiber Optic — TIA-568.3-D / ITU-T G.652</h4>
       <table class="rp-table">
-        <tr><th>نوع الفايبر</th><th>الكورات</th><th>الطول الكلي</th><th>ODF</th><th>نقاط اللحام</th><th>Loss Budget</th></tr>
-        <tr><td>${fb.fiberType||'–'}</td><td>${fb.coresNum||'–'}F</td><td>${fb.totalCableLen||0}م</td>
-            <td>${fb.odfCount||0}</td><td>${fb.spliceCount||0}</td><td>${(fb.totalLoss||0).toFixed(2)} dB</td></tr>
+        <tr><th>Fiber Type</th><th>Cores</th><th>Total Length</th><th>ODF</th><th>Splice Points</th><th>Loss Budget</th></tr>
+        <tr><td>${fb.fiberType||'–'}</td><td>${fb.coresNum||'–'} F</td><td>${fb.totalCableLen||0} m</td>
+            <td>${fb.odfCount||0}</td><td>${fb.spliceCount||0}</td>
+            <td>${(fb.totalLoss||0).toFixed(2)} dB</td></tr>
       </table>
-      ${(fb.runs||[]).map(r=>`<div style="font-size:11px;color:#666;margin-top:3px">• ${r.label}: ${r.len}م — ${r.type==='intra'?'داخل المبنى':'Inter-Building'}</div>`).join('')}
+      ${(fb.runs||[]).map(r=>`
+        <div style="font-size:11px;color:#555;margin-top:3px">
+          • ${r.label}: ${r.len} m — ${r.type==='intra'?'Intra-Building':'Inter-Building Campus'}
+        </div>`).join('')}
     </div>`;
 
   if (sc('rsc-network') && nw.poeSwitchCount) html += `
-    <div class="rp-section"><h4>🌐 الشبكة — IEEE 802.3 / TIA-942</h4>
+    <div class="rp-section"><h4>🌐 Network — IEEE 802.3 / TIA-942</h4>
       <table class="rp-table">
-        <tr><th>Core Switch</th><th>PoE Switches</th><th>NVR Count</th><th>Bandwidth</th><th>PoE Load</th><th>SFP</th></tr>
+        <tr><th>Core Switch</th><th>PoE Switches</th><th>NVR Count</th>
+            <th>Bandwidth</th><th>PoE Load</th><th>SFP Modules</th></tr>
         <tr><td>${nw.coreBrand||'–'}</td><td>${nw.poeSwitchCount}</td><td>${nw.nvrCount||0}</td>
-            <td>${nw.totalBW||0} Mbps</td><td>${(nw.totalPoeLoad||0).toFixed(0)}W</td><td>${nw.sfpQty||0}</td></tr>
+            <td>${nw.totalBW||0} Mbps</td><td>${(nw.totalPoeLoad||0).toFixed(0)} W</td>
+            <td>${nw.sfpQty||0}</td></tr>
       </table></div>`;
 
   if (sc('rsc-vw') && vw.totalScr) html += `
-    <div class="rp-section"><h4>🖥️ Video Wall وغرفة المراقبة — ISO 11064 / AVIXA</h4>
+    <div class="rp-section"><h4>🖥️ Video Wall & Control Room — ISO 11064 / AVIXA</h4>
       <table class="rp-table">
-        <tr><th>Video Wall</th><th>Controller</th><th>الأبعاد</th><th>مساحة الغرفة</th><th>التبريد</th></tr>
-        <tr><td>${vw.totalScr} × ${vw.sizeIn||55}" (${vw.cols||3}×${vw.rows||2})</td>
+        <tr><th>Video Wall</th><th>Controller</th><th>Wall Dimensions</th>
+            <th>Room Area</th><th>Cooling</th></tr>
+        <tr><td>${vw.totalScr} screens (${vw.cols||3}×${vw.rows||2}) ${vw.sizeIn||55}"</td>
             <td>${v('vwControllerType')}</td>
-            <td>${(vw.wallW||0).toFixed(2)}م × ${(vw.wallH||0).toFixed(2)}م</td>
-            <td>${cr.totalRoomArea||0} م²</td><td>${(cr.acLoad||0).toFixed(1)} kW = ${cr.acTons||0} TR</td></tr>
+            <td>${(vw.wallW||0).toFixed(2)} m × ${(vw.wallH||0).toFixed(2)} m</td>
+            <td>${cr.totalRoomArea||0} m²</td>
+            <td>${(cr.acLoad||0).toFixed(1)} kW = ${cr.acTons||0} TR</td></tr>
       </table></div>`;
 
   if (sc('rsc-labor')) html += `
-    <div class="rp-section"><h4>👷 العمالة وأيام العمل</h4>
+    <div class="rp-section"><h4>👷 Labor & Timeline</h4>
       <table class="rp-table">
-        <tr><th>إجمالي الساعات</th><th>أيام العمل</th><th>الفريق</th><th>ساعات/يوم</th><th>معامل الصعوبة</th></tr>
-        <tr><td>${state.labor.totalHours}h</td><td><b>${state.labor.totalDays} يوم</b></td>
-            <td>${v('teamSize')} أفراد</td><td>${v('workHoursPerDay')}h</td><td>×${v('difficultyLevel')}</td></tr>
+        <tr><th>Total Hours</th><th>Workdays</th><th>Team Size</th>
+            <th>Hrs / Day</th><th>Difficulty</th></tr>
+        <tr><td>${state.labor.totalHours} h</td><td><b>${state.labor.totalDays} days</b></td>
+            <td>${v('teamSize')} persons</td><td>${v('workHoursPerDay')} h</td>
+            <td>× ${v('difficultyLevel')}</td></tr>
       </table></div>`;
 
   html += `
-    <div style="margin-top:18px;padding:10px 14px;background:#f0f4f8;border-radius:6px;border-right:4px solid #0a2540;font-size:10px;color:#666;line-height:1.8">
-      <strong>معايير مُطبّقة:</strong>
-      IEC 62676 · EIA-310-D · TIA-568-C.2 · TIA-568.3-D · ISO/IEC 11801 ·
-      ITU-T G.652/G.657 · IEEE 802.3af/at/bt · ISO 11064 · AVIXA M301.01 ·
-      IEC 62040-3 · EN 50132 · NFPA 72 · ASHRAE 55<br/>
-      © 2025 Ejaf Technology | Powered by Siwar | جميع الأرقام تقديرية وتخضع للمراجعة الهندسية
+    <div style="margin-top:18px;padding:10px 14px;background:#f0f4f8;border-radius:6px;
+                border-left:4px solid #0a2540;font-size:10px;color:#555;line-height:1.8;direction:ltr">
+      <strong>Applied Standards:</strong>
+      IEC 62676 &nbsp;·&nbsp; EIA-310-D &nbsp;·&nbsp; TIA-568-C.2 &nbsp;·&nbsp;
+      TIA-568.3-D &nbsp;·&nbsp; ISO/IEC 11801 &nbsp;·&nbsp; ITU-T G.652/G.657 &nbsp;·&nbsp;
+      IEEE 802.3af/at/bt &nbsp;·&nbsp; ISO 11064 &nbsp;·&nbsp; AVIXA M301.01 &nbsp;·&nbsp;
+      IEC 62040-3 &nbsp;·&nbsp; EN 50132 &nbsp;·&nbsp; NFPA 72 &nbsp;·&nbsp; ASHRAE 55<br/>
+      © 2025 Ejaf Technology &nbsp;|&nbsp; Powered by Siwar &nbsp;|&nbsp;
+      All figures are estimates subject to final engineering review.
     </div>`;
 
   document.getElementById('reportBody').innerHTML = html;
