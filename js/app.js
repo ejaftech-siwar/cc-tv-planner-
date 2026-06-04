@@ -1956,3 +1956,468 @@ window.exportExcel = function() {
 
   XLSX.writeFile(wb, `EJAF-CCTV-v3-${v('projectName')}-${v('projectDate')}.xlsx`);
 };
+
+// ═══════════════════════════════════════════════════════
+//  PROFESSIONAL FLOOR PLAN ENGINE v2.0
+//  PDF.js rendering + SVG cameras + Zoom/Pan/Snap
+// ═══════════════════════════════════════════════════════
+
+// ── Set PDF.js worker ──
+if (typeof pdfjsLib !== 'undefined') {
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+// ── State ──
+const FP = {
+  canvas: null,
+  ctx: null,
+  fabric: null,
+  tool: 'dome',
+  snapOn: false,
+  snapSize: 20,
+  zoom: 1,
+  panning: false,
+  panStart: { x: 0, y: 0 },
+  items: [],       // {id, type, x, y, fabricObj}
+  floor: 0,
+  floorData: {},   // floor → {bgImage, items}
+  ready: false,
+};
+
+// ── SVG Camera Definitions ──
+const CAM_SVG = {
+  dome: (color='#00c6ff') => `
+    <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44">
+      <circle cx="22" cy="22" r="20" fill="#061828" stroke="${color}" stroke-width="2.5"/>
+      <path d="M8 22 A14 14 0 0 1 36 22" fill="${color}" opacity="0.15"/>
+      <circle cx="22" cy="22" r="9" fill="${color}" opacity="0.25"/>
+      <circle cx="22" cy="22" r="5" fill="${color}" opacity="0.7"/>
+      <circle cx="22" cy="22" r="2.5" fill="${color}"/>
+      <circle cx="26" cy="18" r="1.5" fill="white" opacity="0.6"/>
+    </svg>`,
+
+  bullet: (color='#ff7b00') => `
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="32" viewBox="0 0 48 32">
+      <rect x="2" y="8" width="28" height="16" rx="8" fill="#061828" stroke="${color}" stroke-width="2.5"/>
+      <rect x="28" y="11" width="14" height="10" rx="3" fill="${color}" opacity="0.5"/>
+      <rect x="40" y="13" width="6" height="6" rx="1" fill="${color}" opacity="0.8"/>
+      <circle cx="10" cy="16" r="5" fill="${color}" opacity="0.3"/>
+      <circle cx="10" cy="16" r="2.5" fill="${color}"/>
+      <circle cx="12" cy="14" r="1" fill="white" opacity="0.6"/>
+    </svg>`,
+
+  ptz: (color='#a78bfa') => `
+    <svg xmlns="http://www.w3.org/2000/svg" width="44" height="52" viewBox="0 0 44 52">
+      <rect x="15" y="34" width="14" height="14" rx="2" fill="#061828" stroke="${color}" stroke-width="2"/>
+      <rect x="18" y="30" width="8" height="6" fill="${color}" opacity="0.4"/>
+      <circle cx="22" cy="20" r="16" fill="#061828" stroke="${color}" stroke-width="2.5"/>
+      <circle cx="22" cy="20" r="9" fill="${color}" opacity="0.2"/>
+      <circle cx="22" cy="20" r="5" fill="${color}" opacity="0.6"/>
+      <circle cx="22" cy="20" r="2.5" fill="${color}"/>
+      <line x1="22" y1="4" x2="22" y2="1" stroke="${color}" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="38" y1="20" x2="42" y2="20" stroke="${color}" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="6" y1="20" x2="2" y2="20" stroke="${color}" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="26" cy="16" r="1.5" fill="white" opacity="0.5"/>
+    </svg>`,
+
+  thermal: (color='#ff4d6d') => `
+    <svg xmlns="http://www.w3.org/2000/svg" width="46" height="36" viewBox="0 0 46 36">
+      <rect x="2" y="6" width="30" height="24" rx="4" fill="#061828" stroke="${color}" stroke-width="2.5"/>
+      <rect x="32" y="10" width="10" height="16" rx="2" fill="${color}" opacity="0.4"/>
+      <rect x="7" y="11" width="20" height="14" rx="2" fill="${color}" opacity="0.15"/>
+      <circle cx="17" cy="18" r="5" fill="${color}" opacity="0.4"/>
+      <circle cx="17" cy="18" r="2.5" fill="${color}"/>
+      <path d="M9 4 Q17 0 25 4" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="21" cy="14" r="1.5" fill="white" opacity="0.5"/>
+    </svg>`,
+
+  rack: (color='#00e5a0') => `
+    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="52" viewBox="0 0 36 52">
+      <rect x="2" y="2" width="32" height="48" rx="3" fill="#061828" stroke="${color}" stroke-width="2.5"/>
+      <rect x="5" y="7" width="26" height="5" rx="1.5" fill="${color}" opacity="0.8"/>
+      <rect x="5" y="14" width="26" height="5" rx="1.5" fill="${color}" opacity="0.6"/>
+      <rect x="5" y="21" width="26" height="5" rx="1.5" fill="${color}" opacity="0.4"/>
+      <rect x="5" y="28" width="26" height="5" rx="1.5" fill="${color}" opacity="0.3"/>
+      <rect x="5" y="35" width="26" height="5" rx="1.5" fill="${color}" opacity="0.2"/>
+      <circle cx="28" cy="9" r="1.5" fill="${color}"/>
+      <circle cx="28" cy="16" r="1.5" fill="${color}" opacity="0.7"/>
+      <circle cx="28" cy="23" r="1.5" fill="${color}" opacity="0.5"/>
+    </svg>`,
+};
+
+// SVG → Fabric Image
+function svgToFabricImage(svgStr, callback) {
+  const blob = new Blob([svgStr], { type: 'image/svg+xml' });
+  const url  = URL.createObjectURL(blob);
+  fabric.Image.fromURL(url, img => {
+    URL.revokeObjectURL(url);
+    callback(img);
+  });
+}
+
+// ── Init Canvas ──
+function fpInit() {
+  if (FP.ready) return;
+  FP.ready = true;
+
+  const wrap = document.getElementById('fpCanvasWrap');
+  const el   = document.getElementById('floorplanCanvas');
+  if (!wrap || !el) return;
+
+  const w = wrap.clientWidth  || 900;
+  const h = Math.max(550, wrap.clientHeight || 550);
+  el.width  = w;
+  el.height = h;
+
+  FP.fabric = new fabric.Canvas('floorplanCanvas', {
+    backgroundColor: '#07111f',
+    selection: true,
+    preserveObjectStacking: true,
+  });
+
+  // Draw grid
+  fpDrawGrid();
+
+  // Click handler
+  FP.fabric.on('mouse:down', fpOnClick);
+  FP.fabric.on('mouse:move', fpOnMove);
+  FP.fabric.on('mouse:up',   fpOnUp);
+  FP.fabric.on('object:moving', fpOnObjectMoving);
+
+  // Zoom with wheel
+  FP.fabric.on('mouse:wheel', opt => {
+    const delta = opt.e.deltaY;
+    let z = FP.fabric.getZoom();
+    z *= 0.999 ** delta;
+    z = Math.min(Math.max(z, 0.1), 10);
+    FP.fabric.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, z);
+    FP.zoom = z;
+    document.getElementById('fpZoomLevel').textContent = Math.round(z * 100) + '%';
+    opt.e.preventDefault(); opt.e.stopPropagation();
+  });
+
+  fpSetTool('dome');
+}
+
+// ── Grid ──
+function fpDrawGrid() {
+  if (!FP.fabric) return;
+  const w = FP.fabric.getWidth(), h = FP.fabric.getHeight();
+  const g = FP.snapSize;
+  const lines = [];
+  for (let x = 0; x <= w; x += g) {
+    lines.push(new fabric.Line([x,0,x,h], { stroke:'#0d2035', strokeWidth:0.5, selectable:false, evented:false, excludeFromExport:true }));
+  }
+  for (let y = 0; y <= h; y += g) {
+    lines.push(new fabric.Line([0,y,w,y], { stroke:'#0d2035', strokeWidth:0.5, selectable:false, evented:false, excludeFromExport:true }));
+  }
+  const grp = new fabric.Group(lines, { selectable:false, evented:false, excludeFromExport:true, id:'grid' });
+  FP.fabric.add(grp);
+  FP.fabric.sendToBack(grp);
+}
+
+// ── Tool ──
+function fpSetTool(t) {
+  FP.tool = t;
+  document.querySelectorAll('.fp-tool').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('ft-' + t);
+  if (btn) btn.classList.add('active');
+  FP.fabric.selection = (t === 'select');
+  FP.fabric.defaultCursor = t === 'erase' ? 'crosshair' : t === 'select' ? 'default' : 'copy';
+  FP.fabric.getObjects().forEach(o => { if (o.id !== 'grid') o.selectable = (t === 'select'); });
+  fpStatus(t === 'select' ? 'انقر لتحديد — اسحب للتحريك' :
+           t === 'erase'  ? 'انقر على عنصر لحذفه' :
+           `وضع ${t} — انقر على المخطط لإضافة كاميرا`);
+}
+
+function fpStatus(msg) {
+  const el = document.getElementById('fpStatus');
+  if (el) el.textContent = msg;
+}
+
+// ── Snap helper ──
+function fpSnap(val) {
+  return FP.snapOn ? Math.round(val / FP.snapSize) * FP.snapSize : val;
+}
+
+// ── Click Handler ──
+function fpOnClick(opt) {
+  if (!FP.fabric) return;
+  const t = FP.tool;
+
+  if (t === 'select') return;
+
+  if (t === 'erase') {
+    const target = FP.fabric.findTarget(opt.e);
+    if (target && target.id !== 'grid') {
+      FP.fabric.remove(target);
+      fpUpdateCounts();
+    }
+    return;
+  }
+
+  // Pan mode: middle mouse or space+drag handled in move/up
+  if (opt.e.button === 1) return;
+
+  const ptr = FP.fabric.getPointer(opt.e);
+  const x   = fpSnap(ptr.x);
+  const y   = fpSnap(ptr.y);
+
+  // Hide placeholder
+  document.getElementById('fpPlaceholder')?.classList.add('hidden');
+
+  fpPlaceItem(t, x, y);
+}
+
+function fpOnMove(opt) {
+  // Pan with middle mouse or when tool is pan
+  if (opt.e.buttons === 4 || (opt.e.buttons === 1 && opt.e.altKey)) {
+    if (!FP.panning) { FP.panning = true; FP.panStart = { x: opt.e.clientX, y: opt.e.clientY }; return; }
+    const vpt = FP.fabric.viewportTransform.slice();
+    vpt[4] += opt.e.clientX - FP.panStart.x;
+    vpt[5] += opt.e.clientY - FP.panStart.y;
+    FP.fabric.setViewportTransform(vpt);
+    FP.panStart = { x: opt.e.clientX, y: opt.e.clientY };
+  } else {
+    FP.panning = false;
+  }
+}
+
+function fpOnUp() { FP.panning = false; }
+
+function fpOnObjectMoving(opt) {
+  if (!FP.snapOn) return;
+  const obj = opt.target;
+  obj.set({ left: fpSnap(obj.left), top: fpSnap(obj.top) });
+}
+
+// ── Place Item ──
+function fpPlaceItem(type, x, y) {
+  const svgMap = {
+    dome:    CAM_SVG.dome(),
+    bullet:  CAM_SVG.bullet(),
+    ptz:     CAM_SVG.ptz(),
+    thermal: CAM_SVG.thermal(),
+    rack:    CAM_SVG.rack(),
+  };
+  const svg = svgMap[type];
+  if (!svg) return;
+
+  svgToFabricImage(svg, img => {
+    const scale = type === 'rack' ? 0.9 : 0.85;
+    img.set({
+      left: x - (img.width * scale) / 2,
+      top:  y - (img.height * scale) / 2,
+      scaleX: scale, scaleY: scale,
+      selectable: FP.tool === 'select',
+      hasControls: true,
+      hasBorders: true,
+      id: type + '_' + Date.now(),
+      fpType: type,
+    });
+
+    // Label
+    const label = new fabric.Text(type.toUpperCase(), {
+      fontSize: 9,
+      fill: type === 'rack' ? '#00e5a0' : type === 'ptz' ? '#a78bfa' : type === 'thermal' ? '#ff4d6d' : type === 'bullet' ? '#ff7b00' : '#00c6ff',
+      left: x,
+      top: y + (img.height * scale) / 2 + 2,
+      originX: 'center',
+      selectable: false,
+      evented: false,
+      fpLabel: true,
+    });
+
+    FP.fabric.add(img, label);
+    FP.fabric.renderAll();
+    fpUpdateCounts();
+    fpStatus(`✓ ${type} أُضيفت في (${Math.round(x)}, ${Math.round(y)})`);
+  });
+}
+
+// ── Counts ──
+function fpUpdateCounts() {
+  const objs = FP.fabric.getObjects().filter(o => o.fpType);
+  const cams  = objs.filter(o => o.fpType !== 'rack').length;
+  const racks = objs.filter(o => o.fpType === 'rack').length;
+  const ce = document.getElementById('fpCamCount');
+  const re = document.getElementById('fpRackCount');
+  if (ce) ce.textContent = cams;
+  if (re) re.textContent = racks;
+}
+
+// ── Zoom ──
+function fpZoom(factor) {
+  if (!FP.fabric) return;
+  const z = Math.min(Math.max(FP.fabric.getZoom() * factor, 0.1), 10);
+  const center = FP.fabric.getCenter();
+  FP.fabric.zoomToPoint({ x: center.left, y: center.top }, z);
+  document.getElementById('fpZoomLevel').textContent = Math.round(z * 100) + '%';
+}
+
+function fpResetView() {
+  if (!FP.fabric) return;
+  FP.fabric.setViewportTransform([1,0,0,1,0,0]);
+  FP.fabric.setZoom(1);
+  document.getElementById('fpZoomLevel').textContent = '100%';
+}
+
+// ── Snap Toggle ──
+function fpToggleSnap() {
+  FP.snapOn = !FP.snapOn;
+  const btn = document.getElementById('ft-snap');
+  if (btn) btn.classList.toggle('active', FP.snapOn);
+  const el = document.getElementById('fpSnapStatus');
+  if (el) { el.textContent = 'Grid: ' + (FP.snapOn ? 'ON' : 'OFF'); el.style.color = FP.snapOn ? 'var(--accent3)' : 'var(--text-dim)'; }
+}
+
+// ── Clear ──
+function fpClear() {
+  if (!FP.fabric) return;
+  if (!confirm('مسح كل العناصر؟')) return;
+  FP.fabric.getObjects().filter(o => o.id !== 'grid' && !o.excludeFromExport).forEach(o => FP.fabric.remove(o));
+  FP.fabric.renderAll();
+  fpUpdateCounts();
+  document.getElementById('fpPlaceholder')?.classList.remove('hidden');
+}
+
+// ── Load File (PDF + Image) ──
+async function fpLoadFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  fpInit();
+  document.getElementById('fpPlaceholder')?.classList.add('hidden');
+  fpStatus('جاري تحميل الملف...');
+
+  if (file.type === 'application/pdf') {
+    await fpLoadPDF(file);
+  } else {
+    fpLoadImage(file);
+  }
+}
+
+async function fpLoadPDF(file) {
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    const page = await pdf.getPage(1);
+    const vp = page.getViewport({ scale: 2.0 }); // high res
+
+    const offCanvas = document.createElement('canvas');
+    offCanvas.width  = vp.width;
+    offCanvas.height = vp.height;
+    const offCtx = offCanvas.getContext('2d');
+
+    await page.render({ canvasContext: offCtx, viewport: vp }).promise;
+
+    const dataURL = offCanvas.toDataURL('image/png', 1.0);
+    fpSetBackground(dataURL, vp.width, vp.height);
+    fpStatus(`✓ PDF محمّل — الصفحة 1 من ${pdf.numPages}`);
+  } catch (e) {
+    fpStatus('خطأ في تحميل PDF: ' + e.message);
+    console.error(e);
+  }
+}
+
+function fpLoadImage(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => fpSetBackground(e.target.result, img.width, img.height);
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function fpSetBackground(dataURL, imgW, imgH) {
+  if (!FP.fabric) return;
+  const cw = FP.fabric.getWidth();
+  const ch = FP.fabric.getHeight();
+  const scale = Math.min(cw / imgW, ch / imgH, 1);
+
+  fabric.Image.fromURL(dataURL, img => {
+    img.set({ scaleX: scale, scaleY: scale, left: 0, top: 0,
+              selectable: false, evented: false, excludeFromExport: false, opacity: 0.9 });
+    FP.fabric.setBackgroundImage(img, FP.fabric.renderAll.bind(FP.fabric));
+    fpResetView();
+  });
+}
+
+// ── Export PNG ──
+function fpExportPNG() {
+  if (!FP.fabric) return;
+  const url = FP.fabric.toDataURL({ format: 'png', quality: 1, multiplier: 2 });
+  const a = document.createElement('a');
+  a.download = 'EJAF-FloorPlan-' + Date.now() + '.png';
+  a.href = url; a.click();
+}
+
+// ── Export PDF with plan ──
+function fpExportPDF() {
+  if (!FP.fabric) return;
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a3' });
+
+  // Header
+  doc.setFillColor(10,37,64); doc.rect(0,0,420,18,'F');
+  doc.setTextColor(0,198,255); doc.setFontSize(14); doc.setFont('helvetica','bold');
+  doc.text('EJAF Technology — CCTV Floor Plan', 10, 12);
+  doc.setFontSize(8); doc.setTextColor(150,200,220);
+  doc.text('Powered by Siwar | ' + new Date().toLocaleDateString(), 320, 12);
+
+  // Canvas image
+  const dataURL = FP.fabric.toDataURL({ format: 'png', quality: 1, multiplier: 1.5 });
+  doc.addImage(dataURL, 'PNG', 5, 22, 408, 270);
+
+  // Legend
+  doc.setFillColor(10,37,64); doc.rect(0,295,420,12,'F');
+  doc.setTextColor(100,160,200); doc.setFontSize(7);
+  const objs = FP.fabric.getObjects().filter(o=>o.fpType);
+  const cams = objs.filter(o=>o.fpType!=='rack').length;
+  const racks = objs.filter(o=>o.fpType==='rack').length;
+  doc.text(`Cameras: ${cams}  |  Racks: ${racks}  |  EJAF Technology CCTV Planner v3.0`, 10, 302);
+
+  doc.save('EJAF-FloorPlan.pdf');
+}
+
+// ── Floor switching ──
+function fpSwitchFloor(floorId) {
+  FP.floor = floorId;
+  fpStatus('الطابق: ' + floorId);
+}
+
+// ── Override initFabricCanvas (old) → fpInit ──
+window.initFabricCanvas = fpInit;
+window.setTool          = fpSetTool;
+window.clearCanvas      = fpClear;
+window.loadFloorplan    = fpLoadFile;
+window.exportFloorplanPNG = fpExportPNG;
+
+// ── Scope checkbox helpers ──
+window.syncScope = function(cb) {
+  cb.closest('label').classList.toggle('scope-active', cb.checked);
+};
+window.setScopeAll = function(val) {
+  document.querySelectorAll('[id^="rsc-"]').forEach(cb => {
+    cb.checked = val;
+    cb.closest('label').classList.toggle('scope-active', val);
+  });
+};
+
+// ── Init on tab switch ──
+const _swFP = window.switchTab;
+window.switchTab = function(tabId) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tabId)?.classList.add('active');
+  document.querySelector(`[data-tab="${tabId}"]`)?.classList.add('active');
+  if (tabId === 'cameras')   refreshCameraSummary();
+  if (tabId === 'report')    generateReport();
+  if (tabId === 'floorplan') { setTimeout(fpInit, 50); }
+  if (tabId === 'labor')     calculateLabor();
+  if (tabId === 'racks')     { updateRackDimensions(); updateUUtilBar(); }
+  if (tabId === 'fiber')     { updateFiberSpecs(); calcFiber(); }
+  if (tabId === 'network')   calcNetworkSwitches();
+  if (tabId === 'videowall') { updateDisplayCalc(); calcControlRoom(); }
+};
