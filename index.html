@@ -1,337 +1,1699 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ejaf Tech - Engineering Master Tool</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://unpkg.com/html5-qrcode"></script>
-    
-    <style>
-        :root { 
-            /* التدرج الذهبي المعدني الاحترافي */
-            --gold-bg: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c); 
-            --royal-blue: #1e3a8a; 
-            --dark-blue: #0f172a; 
-            --danger: #dc2626;
-            --success: #10b981;
-            --border-color: #cbd5e1;
-        }
-        body { font-family: 'Inter', sans-serif; background: #f8fafc; margin: 0; padding: 20px; color: #1e293b; }
-        .wrapper { max-width: 1000px; margin: auto; background: #fff; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; }
-        
-        /* Premium Golden Header */
-        .header { 
-            background: var(--gold-bg); 
-            padding: 40px 20px; 
-            text-align: center; 
-            border-bottom: 5px solid var(--royal-blue); 
-        }
-        .header h1 { 
-            color: var(--royal-blue); 
-            margin: 0; 
-            font-size: 42px; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            font-weight: 800;
-            text-shadow: 1px 1px 1px rgba(255,255,255,0.6);
-        }
-        .header p { color: #4a3700; font-weight: 700; margin-top: 5px; font-size: 15px; text-transform: uppercase; letter-spacing: 2px; }
-        .header p span { color: var(--danger); background: rgba(255,255,255,0.5); padding: 2px 8px; border-radius: 4px; }
-        
-        .content { padding: 40px; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 24px; }
-        label { font-weight: 600; font-size: 14px; margin-bottom: 8px; display: block; color: var(--dark-blue); }
-        input, select { width: 100%; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 8px; box-sizing: border-box; font-size: 15px; outline: none; background: #fdfdfd; transition: all 0.2s; }
-        input:focus, select:focus { border-color: var(--royal-blue); box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1); background: #fff; }
-        
-        /* Buttons */
-        .btn { background: var(--dark-blue); color: #fff; padding: 14px 24px; border: none; width: 100%; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px; margin-top: 10px; transition: all 0.2s; }
-        .btn:hover { opacity: 0.95; transform: translateY(-1px); }
-        .btn-scanner { background: #b38728; color: #fff; margin-bottom: 25px; border: 1px dashed var(--dark-blue); }
-        .btn-excel { background: var(--success); width: auto; }
-        .btn-excel:hover { background: #059669; }
-        .btn-pdf { background: var(--danger); width: auto; }
-        .btn-pdf:hover { background: #b91c1c; }
-        
-        #reader { width: 100%; max-width: 450px; margin: 0 auto 25px; border-radius: 12px; overflow: hidden; display: none; border: 2px solid var(--border-color); }
-        
-        /* Dynamic Panels */
-        .results-section { margin-top: 40px; border-top: 2px dashed var(--border-color); padding-top: 30px; display: none; }
-        .section-title { font-size: 22px; font-weight: 700; color: var(--dark-blue); margin-bottom: 20px; }
-        .info-card { background: #f8fafc; padding: 20px; border-left: 4px solid var(--royal-blue); border-radius: 0 8px 8px 0; margin-bottom: 20px; font-size: 15px; line-height: 1.6; }
-        .info-card.warning { border-left-color: var(--danger); background: #fef2f2; }
-        
-        .datasheet-link { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-bottom: 25px; border: 1px solid #bae6fd; }
-        
-        /* Responsive Table */
-        .table-responsive { overflow-x: auto; margin: 25px 0; border-radius: 8px; border: 1px solid var(--border-color); }
-        table { width: 100%; border-collapse: collapse; min-width: 750px; text-align: left; font-size: 14px; }
-        th { background: #f1f5f9; padding: 14px; border-bottom: 2px solid var(--border-color); font-weight: 600; color: var(--dark-blue); }
-        td { padding: 14px; border-bottom: 1px solid var(--border-color); color: #334155; }
-        .action-hub { display: flex; gap: 15px; justify-content: center; margin-top: 30px; flex-wrap: wrap; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EJAF Technology – CCTV Project Planner</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Rajdhani:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <!-- jsPDF + xlsx -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 </head>
 <body>
-
-<div class="wrapper" id="app-content">
-    <div class="header">
-        <h1>Ejaf Technology</h1>
-        <p>Powered by <span>Siwar</span></p>
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="logo-block">
+        <div class="logo-ejaf">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="48" height="48" rx="10" fill="#0a2540"/>
+            <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="#00c6ff" font-family="Rajdhani,sans-serif" font-weight="700" font-size="14">EJAF</text>
+          </svg>
+          <div class="logo-text">
+            <span class="logo-main">Ejaf Technology</span>
+            <span class="logo-sub">CCTV Project Planner</span>
+          </div>
+        </div>
+        <div class="powered-by">Powered by <strong>Siwar</strong></div>
+      </div>
+      <div class="header-controls">
+        <button class="lang-toggle" id="langToggle" onclick="toggleLang()">
+          <span class="lang-icon">🌐</span>
+          <span id="langLabel">English</span>
+        </button>
+        <div class="header-badge">v3.0 Pro</div>
+      </div>
     </div>
-    
-    <div class="content">
-        <button class="btn btn-scanner" onclick="initScanner()">📷 Launch AI Barcode / QR Scanner (Rear Camera)</button>
-        <div id="reader"></div>
-
-        <div class="form-grid">
-            <div>
-                <label>Camera Brand (Hardware Profile)</label>
-                <select id="brand">
-                    <option value="Hikvision">Hikvision</option>
-                    <option value="Dahua">Dahua</option>
-                    <option value="Huawei">Huawei Technologies</option>
-                    <option value="HOLOWITS" style="font-weight: bold; color: var(--royal-blue);">HOLOWITS (Huawei Intelligent Vision)</option>
-                    <option value="Bosch">Bosch Security Systems</option>
-                    <option value="Hanwha">Hanwha Vision (Samsung)</option>
-                    <option value="Uniview">Uniview (UNV)</option>
-                    <option value="Axis">Axis Communications</option>
-                    <option value="Pelco">Pelco</option>
-                </select>
-            </div>
-            <div>
-                <label>System Topology / Infrastructure Type</label>
-                <select id="system">
-                    <option value="Standard PoE Switch">Standard PoE Switch (802.3af/at Layer 2/3)</option>
-                    <option value="High Power PoE Switch">High Power PoE++ Switch (For PTZ/Heaters)</option>
-                    <option value="Direct to NVR Ports">Direct to NVR Built-In PoE Ports (Plug & Play)</option>
-                    <option value="Distributed IVS / VMS Server">Distributed IVS / VMS Server System</option>
-                    <option value="Fiber Optic Infrastructure">Fiber Optic Infrastructure (SFP Modules / Media Conv.)</option>
-                    <option value="Wireless Bridge Link">Wireless Bridge / Point-to-Point (PtP) Link</option>
-                </select>
-            </div>
-        </div>
-        
-        <div class="form-grid">
-            <div>
-                <label>Network Switch / System Vendor</label>
-                <select id="swBrand">
-                    <option value="Cisco">Cisco Systems</option>
-                    <option value="Huawei">Huawei Enterprise</option>
-                    <option value="TP-Link">TP-Link Enterprise</option>
-                    <option value="Planet">Planet Technology</option>
-                    <option value="HP Aruba">HP Aruba Networking</option>
-                    <option value="MikroTik">MikroTik RouterOS</option>
-                    <option value="Netgear">Netgear Business</option>
-                    <option value="NVR Embedded NIC">None (Using NVR Internal Embedded Switch)</option>
-                </select>
-            </div>
-            <div>
-                <label>Camera Model Number</label>
-                <input type="text" id="model" placeholder="e.g. IPC6225-VRZ, DS-2CD2143, HWT-IVS1800">
-            </div>
-        </div>
-
-        <div class="form-grid">
-            <div>
-                <label>Deployment Quantity (Total Nodes)</label>
-                <input type="number" id="qty" value="1" min="1">
-            </div>
-            <div>
-                <label>Base Subnet IP Address Plan</label>
-                <input type="text" id="base_ip" value="192.168.1.100">
-            </div>
-        </div>
-
-        <button class="btn" style="font-size:18px;" onclick="generateReport()">⚙️ Process & Initialize Provisioning Engine</button>
-
-        <div id="results" class="results-section">
-            <div class="section-title">Deployment Intelligence Report</div>
-            
-            <a href="#" id="res_datasheet" class="datasheet-link" target="_blank">📄 Open Live Manufacturer Datasheet Search</a>
-
-            <label>Infrastructure Integration & Topology Matrix</label>
-            <div id="res_system_notes" class="info-card"></div>
-
-            <label>Field Engineer Step-by-Step Commissioning Setup</label>
-            <div id="res_instructions" class="info-card" style="border-left-color: var(--success); background: #f0fdf4;"></div>
-
-            <label>Predictive Troubleshooting Matrix & Mitigation Paths</label>
-            <div id="res_troubleshooting" class="info-card warning"></div>
-
-            <label>Automated Node IP Addressing Allocation Plan</label>
-            <div class="table-responsive">
-                <table id="tbl">
-                    <thead>
-                        <tr>
-                            <th>Node ID</th>
-                            <th>Hardware Profile</th>
-                            <th>Infrastructure Topology</th>
-                            <th>Network Vendor</th>
-                            <th>Allocated IPv4</th>
-                            <th>Physical Port Mapping</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-
-            <div class="action-hub">
-                <button class="btn btn-excel" onclick="exportXls()">📊 Export Master Excel Sheet</button>
-                <button class="btn btn-pdf" onclick="exportPdf()">📄 Generate Engineering PDF Report</button>
-            </div>
-        </div>
+    <div class="header-nav">
+      <button class="nav-tab active" data-tab="project" onclick="switchTab('project')">
+        <span class="tab-icon">📋</span><span data-ar="المشروع" data-en="Project">المشروع</span>
+      </button>
+      <button class="nav-tab" data-tab="cameras" onclick="switchTab('cameras')">
+        <span class="tab-icon">📷</span><span data-ar="الكاميرات" data-en="Cameras">الكاميرات</span>
+      </button>
+      <button class="nav-tab" data-tab="racks" onclick="switchTab('racks')">
+        <span class="tab-icon">🗄️</span><span data-ar="الركات" data-en="Racks">الركات</span>
+      </button>
+      <button class="nav-tab" data-tab="cables" onclick="switchTab('cables')">
+        <span class="tab-icon">🔌</span><span data-ar="الكابلات" data-en="Cables">الكابلات</span>
+      </button>
+      <button class="nav-tab" data-tab="labor" onclick="switchTab('labor')">
+        <span class="tab-icon">👷</span><span data-ar="العمالة" data-en="Labor">العمالة</span>
+      </button>
+      <button class="nav-tab" data-tab="fiber" onclick="switchTab('fiber')">
+        <span class="tab-icon">💡</span><span data-ar="الفايبر" data-en="Fiber Optic">الفايبر</span>
+      </button>
+      <button class="nav-tab" data-tab="network" onclick="switchTab('network')">
+        <span class="tab-icon">🌐</span><span data-ar="الشبكة" data-en="Network">الشبكة</span>
+      </button>
+      <button class="nav-tab" data-tab="videowall" onclick="switchTab('videowall')">
+        <span class="tab-icon">🖥️</span><span data-ar="غرفة المراقبة" data-en="Control Room">غرفة المراقبة</span>
+      </button>
+      <button class="nav-tab" data-tab="floorplan" onclick="switchTab('floorplan')">
+        <span class="tab-icon">🗺️</span><span data-ar="المخطط" data-en="Floor Plan">المخطط</span>
+      </button>
+      <button class="nav-tab" data-tab="report" onclick="switchTab('report')">
+        <span class="tab-icon">📊</span><span data-ar="التقارير" data-en="Reports">التقارير</span>
+      </button>
     </div>
-</div>
+  </header>
 
-<script>
-    const systemNotes = {
-        "Standard PoE Switch": "Standard Layer 2/3 topology. Ensure the total PoE budget of the switch handles 15W-30W per active node safely.",
-        "High Power PoE Switch": "PTZ/Thermal infrastructure deployment. Enforce 802.3bt (60W-90W) active mapping on ports.",
-        "Direct to NVR Ports": "Isolated internal NIC environment. NVR embedded DHCP server handles all addressing. Manual camera IPs will be overridden.",
-        "Distributed IVS / VMS Server": "Enterprise datacenter routing. Nodes must bypass local restrictions, open core VMS listening ports, and sync NTP clocks directly with the server.",
-        "Fiber Optic Infrastructure": "Extended distance backhaul. Ensure matching SFP optical wavelengths (TX/RX matching) and install stable local raw auxiliary power.",
-        "Wireless Bridge Link": "Point-to-Point architecture. Ensure perfect clear line of sight (LOS) clearing the Fresnel Zone to avoid immediate packet loss."
-    };
+  <main class="app-main">
 
-    const db = {
-        "Hikvision": {
-            ds: "https://www.hikvision.com/en/search/?q=",
-            inst: "<b>Utility Required:</b> Hikvision SADP Tool<br>1. Connect nodes to network.<br>2. Run SADP, isolate status: 'Inactive'.<br>3. Commit secure alphanumeric master authentication password.<br>4. <b>Batch Config:</b> Check global multi-select, append baseline address block, input master passphrase, execute 'Modify Network Parameters'.",
-            ts: "<b>Symptom:</b> Discovery failure via SADP.<br><b>Mitigation:</b> Force-close host Windows firewall profiles, isolate interface network adapters, confirm local VLAN binding.<br><br><b>Symptom:</b> Packet drops or RTSP stream lagging on NVR.<br><b>Mitigation:</b> Inject H.265+ Smart Codec, enforce Variable Bitrate (VBR) management limits."
-        },
-        "Dahua": {
-            ds: "https://www.dahuasecurity.com/search?keyword=",
-            inst: "<b>Utility Required:</b> Dahua ConfigTool<br>1. Run global broad broadcast sweep via ConfigTool.<br>2. Filter uninitialized nodes -> execute master 'Initialization Wizard'.<br>3. Bind structural password and email.<br>4. <b>Batch Operations:</b> Trigger 'Batch Modify IP' component mapping sequential nodes.",
-            ts: "<b>Symptom:</b> Node displays Offline / Auth-Error on VMS/NVR.<br><b>Mitigation:</b> Verify camera login table credentials explicitly match the corresponding channel mapping configurations on back-end systems."
-        },
-        "Huawei": {
-            ds: "https://e.huawei.com/en/search?searchWord=",
-            inst: "<b>Utility Required:</b> IPC Configuration Tool / iClient<br>1. Boot nodes. Factory native addressing defaults to 192.168.0.120.<br>2. Force administrative credential reconfiguration on initial handshake interface.<br>3. Leverage iClient operational deployment workspace for scalable network map population.",
-            ts: "<b>Symptom:</b> Web browser rendering engine web-plugin blockages.<br><b>Mitigation:</b> Deploy native Edge Internet Explorer Enterprise compatibility rendering layout or pivot execution via thick OS native management software client."
-        },
-        /* تم دمج بيانات HOLOWITS التقنية هنا */
-        "HOLOWITS": {
-            ds: "https://www.holowits.com/support/search?keyword=",
-            inst: "<b>Utility Required:</b> HOLOWITS EasyTool / iClient Deployer<br>1. Connect cameras to the network infrastructure.<br>2. Default IP Address is universally <b>192.168.0.120</b> (192.168.0.100 for NVRs).<br>3. Use batch activation tools to set passwords. <i>Note: Ensure camera passwords strictly match the NVR's startup password for automatic ONVIF binding.</i><br>4. Re-assign IPs in batch to avoid collisions.",
-            ts: "<b>Symptom:</b> Total network failure / IP Address conflict during mass deployment.<br><b>Mitigation:</b> Do not connect multiple unconfigured cameras to a Layer 2 switch simultaneously. Connect and change 192.168.0.120 iteratively, or use the EasyTool batch IP modification feature immediately.<br><br><b>Symptom:</b> Factory reset failure via hardware button.<br><b>Mitigation:</b> Ensure physical network cable is disconnected before pressing reset for 15s to avoid subnet conflicts on reboot."
-        },
-        "Bosch": {
-            ds: "https://commerce.boschsecurity.com/en/search/?text=",
-            inst: "<b>Utility Required:</b> Bosch Configuration Manager<br>1. Interrogate segment via IP Helper or Configuration Manager engine.<br>2. Bosch nodes automatically fallback onto local Link-Local (169.254.x.x) or DHCP tables.<br>3. Elevate security session state to 'Service level authentication' -> map permanent fixed addresses.",
-            ts: "<b>Symptom:</b> Parameter write-commands rejected or blocked.<br><b>Mitigation:</b> Re-verify current session status level. Elevated 'Service' credentials are functionally mandatory to write changes to flash memory."
-        },
-        "Hanwha": {
-            ds: "https://hanwhavision.com/en/search/?q=",
-            inst: "<b>Utility Required:</b> Wisenet Device Manager<br>1. Initialize network scan topology (Default structural IP: 192.168.1.100).<br>2. Batch select active discovered node list, trigger systemic credential injection.<br>3. Execute automated indexing distribution via the 'IP Assign' dynamic mapping panel.",
-            ts: "<b>Symptom:</b> Sensor pixel artifacts or chrominance distortion in low-lux conditions.<br><b>Mitigation:</b> Navigate to specialized DSP algorithms inside camera operating system -> Toggle SSNR (Samsung Super Noise Reduction) engine optimization thresholds."
-        },
-        "Uniview": {
-            ds: "https://www.uniview.com/Search/?q=",
-            inst: "<b>Utility Required:</b> EZTools<br>1. Execute local subnet broadcast discovery via EZTools.<br>2. Target out-of-box native parameters (Factory default IP: 192.168.1.13).<br>3. Select bulk target array, confirm admin context, deploy 'Batch Configuration Network Allocation Matrix'.",
-            ts: "<b>Symptom:</b> Unprovoked transient node packet drop drops or link flapping.<br><b>Mitigation:</b> Cross-reference edge port PoE load drawing characteristics against hardware specifications. Apply manual flash update if memory leaks are localized via tool."
-        },
-        "Axis": {
-            ds: "https://www.axis.com/search?q=",
-            inst: "<b>Utility Required:</b> AXIS IP Utility / AXIS Device Manager<br>1. Ensure switch infrastructure registers link pulse.<br>2. Interrogate hardware layer using AXIS IP Utility engine.<br>3. Trigger direct browser connection interface session -> input modern secure root dictionary password profile.",
-            ts: "<b>Symptom:</b> Network discovery failure over multi-tier routing architecture.<br><b>Mitigation:</b> Physically trigger localized hardware deep-reset sequence by latching operational micro-switch for 15 seconds. Retry discovery via IP Utility tool."
-        },
-        "Pelco": {
-            ds: "https://www.pelco.com/?s=",
-            inst: "<b>Utility Required:</b> Pelco Device Utility (PDU)<br>1. Connect cameras.<br>2. Open PDU to scan (Default IP: 192.168.0.20 or DHCP).<br>3. Double click to launch web UI and configure.",
-            ts: "<b>Symptom:</b> PTZ telemetry unresponsive during high wind / extreme operations.<br><b>Mitigation:</b> Verify edge port interface delivery state. High-performance mechanical assemblies like Pelco Spectra architectures fail selectively if limited below 60W PoE++ specs."
-        }
-    };
+    <!-- ====== TAB: PROJECT ====== -->
+    <section class="tab-content active" id="tab-project">
+      <div class="section-header">
+        <h2 data-ar="معلومات المشروع" data-en="Project Information">معلومات المشروع</h2>
+        <p class="section-desc" data-ar="أدخل البيانات الأساسية للمشروع" data-en="Enter basic project data">أدخل البيانات الأساسية للمشروع</p>
+      </div>
+      <div class="card-grid two-col">
+        <div class="card">
+          <h3 class="card-title" data-ar="بيانات المشروع" data-en="Project Details">بيانات المشروع</h3>
+          <div class="form-group">
+            <label data-ar="اسم المشروع" data-en="Project Name">اسم المشروع</label>
+            <input type="text" id="projectName" placeholder="مثال: مجمع الوردة السكني" />
+          </div>
+          <div class="form-group">
+            <label data-ar="اسم العميل" data-en="Client Name">اسم العميل</label>
+            <input type="text" id="clientName" placeholder="اسم الشركة أو الشخص" />
+          </div>
+          <div class="form-group">
+            <label data-ar="الموقع" data-en="Location">الموقع</label>
+            <input type="text" id="projectLocation" placeholder="المدينة / العنوان" />
+          </div>
+          <div class="form-group">
+            <label data-ar="تاريخ المشروع" data-en="Project Date">تاريخ المشروع</label>
+            <input type="date" id="projectDate" />
+          </div>
+          <div class="form-group">
+            <label data-ar="المهندس المسؤول" data-en="Engineer in Charge">المهندس المسؤول</label>
+            <input type="text" id="engineerName" />
+          </div>
+          <div class="form-group">
+            <label data-ar="رقم المشروع" data-en="Project Number">رقم المشروع</label>
+            <input type="text" id="projectNumber" placeholder="EJ-2025-001" />
+          </div>
+        </div>
 
-    function initScanner() {
-        document.getElementById('reader').style.display = 'block';
-        
-        const html5QrCode = new Html5Qrcode("reader");
-        const config = { fps: 15, qrbox: { width: 320, height: 150 } };
-        
-        html5QrCode.start(
-            { facingMode: "environment" }, 
-            config,
-            (decodedText) => {
-                document.getElementById('model').value = decodedText;
-                html5QrCode.stop().then(() => {
-                    document.getElementById('reader').style.display = 'none';
-                    alert("Matched Hardware Model: " + decodedText);
-                });
-            },
-            (errorMessage) => {
-                // Background tracking
-            }
-        ).catch((err) => {
-            alert("Camera initialization failed. Please ensure you are using HTTPS on GitHub.");
-        });
-    }
+        <div class="card">
+          <h3 class="card-title" data-ar="هيكل المبنى" data-en="Building Structure">هيكل المبنى</h3>
+          <div class="form-group">
+            <label data-ar="عدد الطوابق" data-en="Number of Floors">عدد الطوابق</label>
+            <input type="number" id="numFloors" min="1" max="100" value="1" onchange="generateFloorInputs()" />
+          </div>
+          <div class="form-group">
+            <label data-ar="طوابق الطابق السفلي (B)" data-en="Basement Floors (B)">طوابق تحت الأرض</label>
+            <input type="number" id="numBasement" min="0" max="10" value="0" onchange="generateFloorInputs()" />
+          </div>
+          <div class="form-group">
+            <label data-ar="متوسط ارتفاع الطابق (م)" data-en="Avg Floor Height (m)">متوسط ارتفاع الطابق (م)</label>
+            <input type="number" id="floorHeight" min="2.5" max="20" value="3" step="0.5" />
+          </div>
+          <div class="form-group">
+            <label data-ar="نوع المبنى" data-en="Building Type">نوع المبنى</label>
+            <select id="buildingType">
+              <option value="residential" data-ar="سكني" data-en="Residential">سكني</option>
+              <option value="commercial" data-ar="تجاري" data-en="Commercial">تجاري</option>
+              <option value="industrial" data-ar="صناعي" data-en="Industrial">صناعي</option>
+              <option value="educational" data-ar="تعليمي" data-en="Educational">تعليمي</option>
+              <option value="healthcare" data-ar="صحي" data-en="Healthcare">صحي</option>
+              <option value="government" data-ar="حكومي" data-en="Government">حكومي</option>
+              <option value="mixed" data-ar="متعدد الاستخدام" data-en="Mixed Use">متعدد الاستخدام</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-ar="المعيار المعتمد" data-en="Applied Standard">المعيار المعتمد</label>
+            <select id="projectStandard">
+              <option value="IEC62676">IEC 62676 (CCTV International)</option>
+              <option value="EN50132">EN 50132 (European)</option>
+              <option value="ANSI735">ANSI/SIA CCTV 735</option>
+              <option value="NFPA72">NFPA 72 (Fire/Security)</option>
+              <option value="BS8418">BS 8418 (British)</option>
+            </select>
+          </div>
+        </div>
+      </div>
 
-    function generateReport() {
-        const brand = document.getElementById('brand').value;
-        const systemType = document.getElementById('system').value;
-        const swBrand = document.getElementById('swBrand').value;
-        const model = document.getElementById('model').value || "Global Profile Node";
-        const qty = parseInt(document.getElementById('qty').value) || 1;
-        let baseIpStr = document.getElementById('base_ip').value;
-        
-        const intel = db[brand];
-        
-        document.getElementById('res_datasheet').href = intel.ds + encodeURIComponent(model);
-        document.getElementById('res_system_notes').innerHTML = `<b>Topology Protocol:</b> ` + systemNotes[systemType];
-        document.getElementById('res_instructions').innerHTML = intel.inst;
-        document.getElementById('res_troubleshooting').innerHTML = intel.ts;
-        
-        const tbody = document.querySelector('#tbl tbody');
-        tbody.innerHTML = ''; 
-        
-        let ipParts = baseIpStr.split('.');
-        if (ipParts.length !== 4) {
-            alert("Subnet Matrix Error: Invalid IPv4 Scheme formatting.");
-            return;
-        }
-        let lastOctet = parseInt(ipParts[3]);
-        
-        for(let i = 0; i < qty; i++) {
-            let currentIp = `${ipParts[0]}.${ipParts[1]}.${ipParts[2]}.${lastOctet + i}`;
-            
-            if (systemType === "Direct to NVR Ports") {
-                currentIp = `Dynamic DHCP (Internal NVR NIC Subnet - Port ${i+1})`;
-            }
+      <!-- Floor-by-floor input -->
+      <div class="card mt-20" id="floorInputsCard">
+        <h3 class="card-title" data-ar="تفاصيل كل طابق" data-en="Per-Floor Details">تفاصيل كل طابق</h3>
+        <p class="hint" data-ar="حدد عدد الكاميرات في كل طابق ونوعها" data-en="Set camera count and type per floor">حدد عدد الكاميرات في كل طابق ونوعها</p>
+        <div id="floorInputsContainer"></div>
+        <button class="btn-primary mt-20" onclick="generateFloorInputs()">
+          <span data-ar="تحديث الطوابق" data-en="Update Floors">تحديث الطوابق</span>
+        </button>
+      </div>
+    </section>
 
-            let row = `<tr>
-                <td><b>Node-${(i + 1).toString().padStart(3, '0')}</b></td>
-                <td>${brand} [${model}]</td>
-                <td>${systemType}</td>
-                <td>${swBrand}</td>
-                <td style="color: #1e3a8a; font-weight: bold;">${currentIp}</td>
-                <td style="color: #64748b; font-style: italic;">Rack Target Assigned</td>
-            </tr>`;
-            tbody.innerHTML += row;
-        }
-        
-        document.getElementById('results').style.display = 'block';
-        document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
-    }
+    <!-- ====== TAB: CAMERAS ====== -->
+    <section class="tab-content" id="tab-cameras">
+      <div class="section-header">
+        <h2 data-ar="إعداد الكاميرات" data-en="Camera Configuration">إعداد الكاميرات</h2>
+        <p class="section-desc" data-ar="حدد براندات الكاميرات وأنواعها حسب المعايير العالمية" data-en="Select camera brands and types per international standards">حدد براندات الكاميرات وأنواعها حسب المعايير العالمية</p>
+      </div>
+      <div class="card-grid two-col">
+        <div class="card">
+          <h3 class="card-title" data-ar="البراند الرئيسي" data-en="Main Brand">البراند الرئيسي</h3>
+          <div class="form-group">
+            <label data-ar="ماركة الكاميرات" data-en="Camera Brand">ماركة الكاميرات</label>
+            <select id="cameraBrand" onchange="updateCameraModels()">
+              <optgroup label="HOLOWITS – Huawei Spin-off (AIoT)">
+                <option value="HOLOWITS-SDC">HOLOWITS SDC – Software Defined Camera (AI)</option>
+                <option value="HOLOWITS-E">HOLOWITS E-Series – AI Basic Cameras (SMB)</option>
+                <option value="HOLOWITS-Thermal">HOLOWITS Thermal – Explosion-Proof / Thermal</option>
+                <option value="HOLOWITS-PTZ">HOLOWITS PTZ – Speed Dome Series</option>
+              </optgroup>
+              <optgroup label="Tier 1 – Enterprise (IEC 62676 Certified)">
+                <option value="Axis">Axis Communications (Sweden) – ARTPEC</option>
+                <option value="Bosch">Bosch Security (Germany) – FLEXIDOME/MIC</option>
+                <option value="Sony">Sony Professional (Japan) – SNC Series</option>
+                <option value="Hanwha">Hanwha Vision / Wisenet (Korea)</option>
+                <option value="Avigilon">Avigilon / Motorola (USA) – H5A/H6</option>
+                <option value="Pelco">Pelco by Motorola (USA) – Sarix/Spectra</option>
+                <option value="Flir">FLIR / Teledyne (USA) – Thermal+Visual</option>
+                <option value="Genetec">Genetec Stratocast (Canada) – Cloud VMS</option>
+                <option value="Mobotix">Mobotix (Germany) – M/Q/P Series</option>
+              </optgroup>
+              <optgroup label="Tier 2 – Professional">
+                <option value="Hikvision">Hikvision (China) – DS-2CD/DS-2DE</option>
+                <option value="Dahua">Dahua Technology (China) – IPC-HDW/HFW</option>
+                <option value="Uniview">Uniview / UNV (China) – IPC Series</option>
+                <option value="CP-Plus">CP Plus (India) – CP-UNC/CP-USC</option>
+                <option value="Tiandy">Tiandy Technologies (China) – TC-C Series</option>
+                <option value="Milesight">Milesight (China) – MS-Cxxxx</option>
+                <option value="Kedacom">Kedacom (China) – IPC2xxx</option>
+                <option value="Huawei-Vision">Huawei Vision IPC Series (China) – Enterprise</option>
+                <option value="Provision-ISR">Provision-ISR (Israel)</option>
+                <option value="TVT">TVT Digital (China)</option>
+                <option value="Vivotek">Vivotek (Taiwan) – IB/FD/MS</option>
+                <option value="ACTi">ACTi Corporation (Taiwan)</option>
+              </optgroup>
+              <optgroup label="Tier 3 – Standard / SMB">
+                <option value="Reolink">Reolink (HK) – RLC/E1 Series</option>
+                <option value="Amcrest">Amcrest (USA) – IP8M Series</option>
+                <option value="Vigi">TP-Link Vigi (China) – C Series</option>
+                <option value="Ezviz">Ezviz / Hikvision Consumer</option>
+                <option value="Foscam">Foscam (China)</option>
+                <option value="Zavio">Zavio (Taiwan)</option>
+                <option value="Arecont">Arecont Vision (USA)</option>
+              </optgroup>
+              <optgroup label="Analog / HD-Analog">
+                <option value="Hikvision-A">Hikvision AHD/HD-TVI</option>
+                <option value="Dahua-A">Dahua HDCVI</option>
+                <option value="Honeywell-A">Honeywell Analytics – HCC Series</option>
+                <option value="Pelco-A">Pelco Analog – CC/IS Series</option>
+                <option value="Bosch-A">Bosch Analog – LTC/VBC Series</option>
+              </optgroup>
+              <optgroup label="Specialty – Thermal / LPR / 360°">
+                <option value="FLIR-Thermal">FLIR A-Series Thermal (USA)</option>
+                <option value="Hikvision-Thermal">Hikvision DS-2TD Thermal</option>
+                <option value="Dahua-Thermal">Dahua TPC Thermal Series</option>
+                <option value="Axis-360">Axis 360° Fisheye (P3717)</option>
+                <option value="Avigilon-LPR">Avigilon LPR H4-LPR</option>
+                <option value="Genetec-LPR">Genetec AutoVu LPR</option>
+                <option value="Other">Other / Custom Brand</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-ar="نظام التسجيل" data-en="Recording System">نظام التسجيل (NVR/DVR/Hybrid)</label>
+            <select id="recordingSystem">
+              <option value="NVR">NVR – Network Video Recorder (IP)</option>
+              <option value="DVR">DVR – Digital Video Recorder (Analog)</option>
+              <option value="Hybrid">Hybrid NVR/DVR</option>
+              <option value="Cloud">Cloud-based VMS</option>
+              <option value="VMS">VMS Server (Enterprise)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-ar="دقة الكاميرا الافتراضية" data-en="Default Resolution">الدقة الافتراضية</label>
+            <select id="defaultResolution">
+              <option value="2MP">2MP – 1080p Full HD</option>
+              <option value="4MP">4MP – 2K</option>
+              <option value="5MP">5MP – Super HD</option>
+              <option value="8MP">8MP – 4K Ultra HD</option>
+              <option value="12MP">12MP – 4K+</option>
+              <option value="Analog-AHD">Analog AHD 2MP</option>
+              <option value="Analog-HD">Analog HD-CVI/TVI 4MP</option>
+            </select>
+          </div>
+        </div>
 
-    function exportXls() {
-        let wb = XLSX.utils.table_to_book(document.getElementById('tbl'), {sheet:"Infrastructure Plan"});
-        XLSX.writeFile(wb, "EjafTech_Master_Deployment_Plan.xlsx");
-    }
+        <div class="card">
+          <h3 class="card-title" data-ar="أنواع الكاميرات المستخدمة" data-en="Camera Types Used">أنواع الكاميرات المستخدمة</h3>
+          <div id="cameraTypesContainer">
+            <div class="camera-type-row">
+              <div class="type-badge indoor">داخلي / Indoor</div>
+              <div class="type-controls">
+                <div class="form-group-inline">
+                  <label data-ar="نوع" data-en="Type">نوع</label>
+                  <select class="cam-type-select" data-location="indoor">
+                    <option value="Dome">Dome</option>
+                    <option value="Bullet">Bullet</option>
+                    <option value="PTZ">PTZ</option>
+                    <option value="Fisheye">Fisheye / 360°</option>
+                    <option value="Mini-Dome">Mini Dome</option>
+                    <option value="Covert">Covert / Pinhole</option>
+                  </select>
+                </div>
+                <div class="form-group-inline">
+                  <label data-ar="IR (م)" data-en="IR (m)">IR (م)</label>
+                  <input type="number" class="cam-ir" value="30" min="10" max="200" />
+                </div>
+                <div class="form-group-inline">
+                  <label data-ar="IP Rating" data-en="IP Rating">IP Rating</label>
+                  <select class="cam-ip">
+                    <option value="IP42">IP42</option>
+                    <option value="IP54">IP54</option>
+                    <option value="IP65">IP65</option>
+                    <option value="IP66">IP66</option>
+                    <option value="IP67">IP67</option>
+                    <option value="IP68">IP68</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="camera-type-row mt-10">
+              <div class="type-badge outdoor">خارجي / Outdoor</div>
+              <div class="type-controls">
+                <div class="form-group-inline">
+                  <label data-ar="نوع" data-en="Type">نوع</label>
+                  <select class="cam-type-select" data-location="outdoor">
+                    <option value="Bullet">Bullet</option>
+                    <option value="Dome">Dome</option>
+                    <option value="PTZ">PTZ</option>
+                    <option value="Turret">Turret</option>
+                    <option value="Box">Box Camera</option>
+                    <option value="Thermal">Thermal</option>
+                    <option value="LPR">LPR / ANPR</option>
+                  </select>
+                </div>
+                <div class="form-group-inline">
+                  <label>IR (م)</label>
+                  <input type="number" class="cam-ir" value="50" min="10" max="300" />
+                </div>
+                <div class="form-group-inline">
+                  <label>IP Rating</label>
+                  <select class="cam-ip">
+                    <option value="IP66" selected>IP66</option>
+                    <option value="IP67">IP67</option>
+                    <option value="IP68">IP68</option>
+                    <option value="IK10">IK10 Vandal-proof</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    function exportPdf() {
-        const element = document.getElementById('app-content');
-        const opt = {
-            margin:       0.25,
-            filename:     'EjafTech_Engineering_Report.pdf',
-            image:        { type: 'jpeg', quality: 1.0 },
-            html2canvas:  { scale: 2 },
-            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-        };
-        html2pdf().set(opt).from(element).save();
-    }
-</script>
+      <!-- Summary cards -->
+      <div class="card mt-20" id="cameraSummaryCard">
+        <h3 class="card-title" data-ar="ملخص الكاميرات" data-en="Camera Summary">ملخص الكاميرات</h3>
+        <div class="stats-row" id="cameraSummaryStats">
+          <div class="stat-box">
+            <div class="stat-num" id="totalCams">0</div>
+            <div class="stat-label" data-ar="إجمالي الكاميرات" data-en="Total Cameras">إجمالي الكاميرات</div>
+          </div>
+          <div class="stat-box indoor-stat">
+            <div class="stat-num" id="indoorCams">0</div>
+            <div class="stat-label" data-ar="داخلية" data-en="Indoor">داخلية</div>
+          </div>
+          <div class="stat-box outdoor-stat">
+            <div class="stat-num" id="outdoorCams">0</div>
+            <div class="stat-label" data-ar="خارجية" data-en="Outdoor">خارجية</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num" id="totalNVR">0</div>
+            <div class="stat-label" data-ar="عدد NVR/DVR" data-en="NVR/DVR Count">عدد NVR/DVR</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== TAB: RACKS ====== -->
+    <section class="tab-content" id="tab-racks">
+      <div class="section-header">
+        <h2 data-ar="توزيع الركات والمعدات" data-en="Rack Distribution & Equipment">توزيع الركات والمعدات</h2>
+        <p class="section-desc" data-ar="حسب معيار EIA-310-D / IEC 60297 للأبعاد القياسية" data-en="Per EIA-310-D / IEC 60297 standard dimensions">حسب معيار EIA-310-D / IEC 60297 للأبعاد القياسية</p>
+      </div>
+
+      <!-- ROW 1: Strategy + Rack Specs -->
+      <div class="card-grid two-col">
+
+        <!-- Strategy -->
+        <div class="card">
+          <h3 class="card-title">📐 استراتيجية التوزيع | Distribution Strategy</h3>
+          <div class="form-group">
+            <label>نمط توزيع الركات</label>
+            <select id="rackStrategy" onchange="updateRackStrategy()">
+              <option value="per-floor">رك لكل طابق منفرد</option>
+              <option value="per-2floors">رك مشترك لكل طابقين</option>
+              <option value="per-3floors">رك مشترك لكل 3 طوابق</option>
+              <option value="per-5floors">رك مشترك لكل 5 طوابق</option>
+              <option value="central">رك مركزي واحد (Central)</option>
+              <option value="custom">توزيع مخصص (Custom)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>موقع الرك في الطابق</label>
+            <select id="rackLocation">
+              <option value="electrical-room">غرفة كهربائية / Electrical Room</option>
+              <option value="server-room">غرفة سيرفر / Server Room</option>
+              <option value="security-room">غرفة أمن / Security Control Room</option>
+              <option value="corridor">ممر / Corridor (Wall-Mount)</option>
+              <option value="rooftop">سطح / Rooftop</option>
+              <option value="basement">قبو / Basement MDF Room</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>مدة الأرشفة (أيام) – H.265</label>
+            <input type="number" id="archiveDays" value="30" min="7" max="365" />
+          </div>
+          <div class="form-group">
+            <label>استطاعة NVR لكل ريكورد (قنوات)</label>
+            <select id="nvrChannels">
+              <option value="8">8 قنوات</option>
+              <option value="16" selected>16 قناة (الأكثر شيوعاً)</option>
+              <option value="32">32 قناة</option>
+              <option value="64">64 قناة</option>
+              <option value="128">128 قناة (Enterprise)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Rack Physical Specs - EIA-310-D -->
+        <div class="card">
+          <h3 class="card-title">🗄️ مواصفات الرك – EIA-310-D / IEC 60297</h3>
+          <div class="form-group">
+            <label>نوع الرك</label>
+            <select id="rackType" onchange="updateRackDimensions()">
+              <optgroup label="Full-Size Racks (Floor-Standing)">
+                <option value="42U-open"   data-h="2000" data-w="600" data-d="600" data-u="42" data-load="1000">42U Open Frame – 2000×600×600mm</option>
+                <option value="42U-closed" data-h="2000" data-w="600" data-d="1000" data-u="42" data-load="1000">42U Closed (Glass Door) – 2000×600×1000mm</option>
+                <option value="45U-closed" data-h="2133" data-w="600" data-d="1070" data-u="45" data-load="1360">45U Closed – 2133×600×1070mm (Standard Telecom)</option>
+                <option value="47U"        data-h="2222" data-w="600" data-d="1070" data-u="47" data-load="1360">47U – 2222×600×1070mm</option>
+                <option value="48U"        data-h="2266" data-w="600" data-d="1200" data-u="48" data-load="1500">48U – 2266×600×1200mm (Heavy Duty)</option>
+              </optgroup>
+              <optgroup label="Mid-Size Racks">
+                <option value="36U"  data-h="1752" data-w="600" data-d="900" data-u="36" data-load="800">36U – 1752×600×900mm</option>
+                <option value="32U"  data-h="1588" data-w="600" data-d="900" data-u="32" data-load="800">32U – 1588×600×900mm</option>
+                <option value="27U"  data-h="1344" data-w="600" data-d="800" data-u="27" data-load="700">27U – 1344×600×800mm</option>
+                <option value="24U"  data-h="1200" data-w="600" data-d="800" data-u="24" data-load="600">24U – 1200×600×800mm</option>
+              </optgroup>
+              <optgroup label="Wall-Mount Racks">
+                <option value="12U-wall" data-h="635" data-w="540" data-d="450" data-u="12" data-load="60">12U Wall-Mount – 635×540×450mm</option>
+                <option value="9U-wall"  data-h="500" data-w="540" data-d="400" data-u="9"  data-load="60">9U Wall-Mount – 500×540×400mm</option>
+                <option value="6U-wall"  data-h="368" data-w="540" data-d="350" data-u="6"  data-load="50">6U Wall-Mount – 368×540×350mm</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <!-- Live Dimensions Display -->
+          <div class="rack-dims-display" id="rackDimsDisplay">
+            <div class="dim-grid">
+              <div class="dim-box"><span class="dim-val" id="dimU">42</span><span class="dim-lbl">Unit (U)</span></div>
+              <div class="dim-box"><span class="dim-val" id="dimH">2000</span><span class="dim-lbl">Height (mm)</span></div>
+              <div class="dim-box"><span class="dim-val" id="dimW">600</span><span class="dim-lbl">Width (mm)</span></div>
+              <div class="dim-box"><span class="dim-val" id="dimD">600</span><span class="dim-lbl">Depth (mm)</span></div>
+              <div class="dim-box"><span class="dim-val" id="dimLoad">1000</span><span class="dim-lbl">Max Load (kg)</span></div>
+              <div class="dim-box"><span class="dim-val" id="dimUsable">–</span><span class="dim-lbl">Usable U</span></div>
+            </div>
+            <div class="info-box" style="margin-top:10px">
+              <div class="info-icon">📏</div>
+              <div class="info-text">1U = 44.45mm (1.75") | عرض القضيب 19" (482.6mm) حسب EIA-310-D</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROW 2: Rack Contents + UPS -->
+      <div class="card-grid two-col mt-20">
+
+        <!-- Rack Contents -->
+        <div class="card">
+          <h3 class="card-title">🔧 محتويات الرك القياسي</h3>
+          <div class="rack-item-list">
+            <div class="rack-item">
+              <span class="rack-item-name">NVR / DVR Recorder</span>
+              <input type="number" class="rack-qty" value="1" min="0" max="10" data-item="NVR" data-u="2" />
+              <span class="rack-unit">2U</span>
+            </div>
+            <div class="rack-item">
+              <span class="rack-item-name">PoE Switch 24-port (IEEE 802.3at)</span>
+              <input type="number" class="rack-qty" value="1" min="0" max="10" data-item="PoE-Switch" data-u="1" />
+              <span class="rack-unit">1U</span>
+            </div>
+            <div class="rack-item">
+              <span class="rack-item-name">Core Switch / Uplink</span>
+              <input type="number" class="rack-qty" value="0" min="0" max="4" data-item="Core-Switch" data-u="1" />
+              <span class="rack-unit">1U</span>
+            </div>
+            <div class="rack-item">
+              <span class="rack-item-name">Patch Panel 24-port (Cat6A)</span>
+              <input type="number" class="rack-qty" value="1" min="0" max="10" data-item="Patch-Panel" data-u="1" />
+              <span class="rack-unit">1U</span>
+            </div>
+            <div class="rack-item">
+              <span class="rack-item-name">Cable Management 1U</span>
+              <input type="number" class="rack-qty" value="2" min="0" max="10" data-item="Cable-Mgmt" data-u="1" />
+              <span class="rack-unit">1U</span>
+            </div>
+            <div class="rack-item">
+              <span class="rack-item-name">KVM Console 1U</span>
+              <input type="number" class="rack-qty" value="0" min="0" max="2" data-item="KVM" data-u="1" />
+              <span class="rack-unit">1U</span>
+            </div>
+            <div class="rack-item">
+              <span class="rack-item-name">Video Wall Controller</span>
+              <input type="number" class="rack-qty" value="0" min="0" max="4" data-item="VW-Controller" data-u="2" />
+              <span class="rack-unit">2U</span>
+            </div>
+            <div class="rack-item">
+              <span class="rack-item-name">PDU (Power Distribution Unit)</span>
+              <input type="number" class="rack-qty" value="1" min="0" max="4" data-item="PDU" data-u="1" />
+              <span class="rack-unit">1U</span>
+            </div>
+            <div class="rack-item">
+              <span class="rack-item-name">Blank Panel (spare U)</span>
+              <input type="number" class="rack-qty" value="4" min="0" max="20" data-item="Blank" data-u="1" />
+              <span class="rack-unit">1U</span>
+            </div>
+          </div>
+          <!-- U utilization live -->
+          <div class="u-util-bar mt-15" id="uUtilBar">
+            <div class="u-util-header">
+              <span>استخدام الرك</span>
+              <span id="uUtilText">0 / 42 U</span>
+            </div>
+            <div class="u-bar-bg"><div class="u-bar-fill" id="uBarFill" style="width:0%"></div></div>
+          </div>
+        </div>
+
+        <!-- UPS Section - FULL STANDARDS -->
+        <div class="card">
+          <h3 class="card-title">⚡ UPS – نظام الطاقة الاحتياطية</h3>
+
+          <!-- UPS Topology -->
+          <div class="form-group">
+            <label>نظام UPS</label>
+            <select id="upsSystem" onchange="toggleUPSOptions()">
+              <option value="per-rack">UPS محلي لكل رك (Per-Rack UPS)</option>
+              <option value="central">UPS مركزي واحد (Central / Room UPS)</option>
+              <option value="none">بدون UPS (مصدر طاقة عادي)</option>
+            </select>
+          </div>
+
+          <!-- Per-Rack UPS Options -->
+          <div id="perRackUPSOptions">
+            <div class="form-group">
+              <label>استطاعة UPS لكل رك</label>
+              <select id="upsCapacityPerRack">
+                <optgroup label="Small Rack UPS (Line-Interactive – IEC 62040-3 Class II)">
+                  <option value="650"  data-u="1" data-w="390"  data-runtime="10">650 VA / 390W – 1U (10 دقيقة احتياط)</option>
+                  <option value="1000" data-u="2" data-w="600"  data-runtime="10">1000 VA / 600W – 2U (10 دقيقة)</option>
+                  <option value="1500" data-u="2" data-w="900"  data-runtime="10" selected>1500 VA / 900W – 2U (10 دقيقة) ⭐ الأكثر شيوعاً</option>
+                  <option value="2000" data-u="2" data-w="1200" data-runtime="8">2000 VA / 1200W – 2U (8 دقائق)</option>
+                  <option value="3000" data-u="2" data-w="2100" data-runtime="6">3000 VA / 2100W – 2U (6 دقائق)</option>
+                </optgroup>
+                <optgroup label="Tower UPS (On-Line Double Conversion – IEC 62040-3 Class I)">
+                  <option value="6000" data-u="5" data-w="5400" data-runtime="5">6 KVA / 5.4 KW – 5U (On-Line)</option>
+                  <option value="10000" data-u="6" data-w="9000" data-runtime="5">10 KVA / 9 KW – 6U (On-Line)</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>مدة الاحتياط المطلوبة (دقيقة)</label>
+              <select id="upsRuntimePerRack">
+                <option value="5">5 دقائق (بداية مولد)</option>
+                <option value="10" selected>10 دقائق ⭐ (IEC/BS EN 62040 الموصى)</option>
+                <option value="15">15 دقيقة</option>
+                <option value="30">30 دقيقة</option>
+                <option value="60">60 دقيقة (1 ساعة)</option>
+                <option value="120">120 دقيقة (مشاريع حكومية)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>براند UPS</label>
+              <select id="upsBrand">
+                <optgroup label="Tier 1">
+                  <option value="APC">APC by Schneider Electric (USA)</option>
+                  <option value="Eaton">Eaton (USA/Ireland)</option>
+                  <option value="Vertiv">Vertiv / Liebert (USA)</option>
+                </optgroup>
+                <optgroup label="Tier 2">
+                  <option value="Socomec">Socomec (France)</option>
+                  <option value="Riello">Riello UPS (Italy)</option>
+                  <option value="PowerWalker">PowerWalker / Bluewalker</option>
+                  <option value="CyberPower">CyberPower (Taiwan)</option>
+                  <option value="Numeric">Numeric (India)</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+
+          <!-- Central UPS Options -->
+          <div id="centralUPSOptions" style="display:none">
+            <div class="ups-central-banner">
+              <span>🏢 UPS مركزي – يغذي جميع الركات من نقطة واحدة</span>
+            </div>
+            <div class="form-group">
+              <label>استطاعة UPS المركزي</label>
+              <select id="upsCapacityCentral">
+                <optgroup label="3-Phase On-Line UPS (IEC 62040-3 Class I – Double Conversion)">
+                  <option value="10">10 KVA / 9 KW (مشاريع صغيرة)</option>
+                  <option value="15">15 KVA / 13.5 KW</option>
+                  <option value="20" selected>20 KVA / 18 KW ⭐ (متوسط)</option>
+                  <option value="30">30 KVA / 27 KW</option>
+                  <option value="40">40 KVA / 36 KW</option>
+                  <option value="60">60 KVA / 54 KW (مباني كبيرة)</option>
+                  <option value="80">80 KVA / 72 KW</option>
+                  <option value="100">100 KVA / 90 KW (Enterprise)</option>
+                  <option value="160">160 KVA / 144 KW (Data Center)</option>
+                  <option value="200">200 KVA / 180 KW (Large Campus)</option>
+                </optgroup>
+                <optgroup label="Modular UPS (Scalable)">
+                  <option value="mod-20">20 KVA Modular (قابل للتوسعة)</option>
+                  <option value="mod-60">60 KVA Modular</option>
+                  <option value="mod-120">120 KVA Modular</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>مدة الاحتياط</label>
+              <select id="upsRuntimeCentral">
+                <option value="10">10 دقائق (مع مولد)</option>
+                <option value="30">30 دقيقة</option>
+                <option value="60" selected>60 دقيقة ⭐ (حكومي/مؤسسي)</option>
+                <option value="120">120 دقيقة</option>
+                <option value="240">240 دقيقة (4 ساعات)</option>
+                <option value="480">8 ساعات (مشاريع نفطية/عسكرية)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>توصيل UPS المركزي</label>
+              <select id="upsCentralFeed">
+                <option value="single">Single Feed – مصدر واحد</option>
+                <option value="dual">Dual Feed – مصدر مزدوج (Redundant)</option>
+                <option value="parallel">Parallel Redundant (N+1) – موثوقية عالية</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>براند UPS المركزي</label>
+              <select id="upsBrandCentral">
+                <option value="APC-Galaxy">APC Galaxy (Schneider) – 3-Phase</option>
+                <option value="Eaton-9E">Eaton 9E / 9PX – 3-Phase</option>
+                <option value="Vertiv-GXT">Vertiv Liebert GXT</option>
+                <option value="ABB">ABB PowerValue</option>
+                <option value="Huawei-UPS">Huawei UPS5000-E</option>
+                <option value="Socomec-Delphys">Socomec Delphys</option>
+              </select>
+            </div>
+            <div class="info-box">
+              <div class="info-icon">⚡</div>
+              <div class="info-text">
+                UPS مركزي 3-Phase يتوافق مع IEC 62040-3 Class I (Double Conversion Online).
+                يُنصح بـ N+1 Redundancy للمشاريع الحيوية حسب TIA-942 Tier II+.
+                يُغذى من لوحة كهربائية مخصصة مع ATS (Automatic Transfer Switch).
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rack Summary -->
+      <div class="card mt-20" id="rackSummaryCard">
+        <h3 class="card-title">📊 ملخص الركات المحسوب | Calculated Rack Summary</h3>
+        <div id="rackSummaryContent">
+          <p class="hint">اضغط الزر أدناه لحساب الركات بعد إدخال بيانات الطوابق</p>
+        </div>
+        <button class="btn-primary mt-15" onclick="calculateRacks()">
+          <span>⚙️ احسب الركات والـ UPS</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ====== TAB: CABLES ====== -->
+    <section class="tab-content" id="tab-cables">
+      <div class="section-header">
+        <h2 data-ar="الكابلات والأسلاك" data-en="Cables & Wiring">الكابلات والأسلاك</h2>
+        <p class="section-desc" data-ar="حساب أطوال الكابلات حسب المعايير العالمية" data-en="Calculate cable lengths per international standards">حساب أطوال الكابلات حسب المعايير العالمية</p>
+      </div>
+      <div class="card-grid two-col">
+        <div class="card">
+          <h3 class="card-title" data-ar="نوع الكابل الرئيسي" data-en="Main Cable Type">نوع الكابل الرئيسي</h3>
+          <div class="form-group">
+            <label data-ar="نوع الكابل لكاميرات IP" data-en="IP Camera Cable Type">كاميرات IP (Network)</label>
+            <select id="ipCableType">
+              <option value="Cat6">Cat6 – UTP (Standard, up to 100m)</option>
+              <option value="Cat6A">Cat6A – UTP/STP (up to 100m, 10GbE)</option>
+              <option value="Cat6A-STP">Cat6A – STP Shielded (Industrial)</option>
+              <option value="Cat7">Cat7 – SFTP (High Shielding, up to 100m)</option>
+              <option value="Cat8">Cat8 – 40GbE (Data Center)</option>
+              <option value="Fiber-OM3">Fiber Optic OM3 (Multi-mode)</option>
+              <option value="Fiber-SM">Fiber Optic SM (Single-mode, long dist.)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-ar="كابل كاميرات أنالوغ" data-en="Analog Camera Cable">كاميرات أنالوغ</label>
+            <select id="analogCableType">
+              <option value="RG59">RG59 – Coaxial (up to 300m)</option>
+              <option value="RG6">RG6 – Coaxial (up to 450m)</option>
+              <option value="RG11">RG11 – Coaxial (up to 900m)</option>
+              <option value="Siamese">Siamese Cable (RG59+Power)</option>
+              <option value="Twisted-Pair">Twisted Pair (Balun)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-ar="كابل الطاقة" data-en="Power Cable">كابل الطاقة (PoE / 12V)</label>
+            <select id="powerCableType">
+              <option value="PoE">PoE – Power over Ethernet (IEEE 802.3af)</option>
+              <option value="PoE+">PoE+ – 30W (IEEE 802.3at)</option>
+              <option value="PoE++">PoE++ – 90W (IEEE 802.3bt)</option>
+              <option value="12VDC">12V DC (Separate adapter)</option>
+              <option value="24VAC">24V AC</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-ar="براند الكابل" data-en="Cable Brand">براند الكابل</label>
+            <select id="cableBrand">
+              <optgroup label="Premium">
+                <option value="Belden">Belden (USA)</option>
+                <option value="CommScope">CommScope (USA)</option>
+                <option value="Panduit">Panduit (USA)</option>
+                <option value="Legrand">Legrand (France)</option>
+              </optgroup>
+              <optgroup label="Standard">
+                <option value="Nexans">Nexans</option>
+                <option value="Draka">Draka</option>
+                <option value="Lapp">Lapp Group</option>
+                <option value="LS-Cable">LS Cable (Korea)</option>
+                <option value="Local">Local / Unbranded</option>
+              </optgroup>
+            </select>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title" data-ar="حساب الأطوال" data-en="Length Calculation">حساب الأطوال</h3>
+          <div class="form-group">
+            <label data-ar="متوسط المسافة من الكاميرا للرك (م) - قابل للتعديل" data-en="Avg Distance Camera to Rack (m) – Editable">متوسط المسافة للرك (م) <span class="optional-tag">قابل للتعديل</span></label>
+            <input type="number" id="avgCableLength" value="50" min="5" max="500" step="5" />
+          </div>
+          <div class="form-group">
+            <label data-ar="معامل الهدر (% - مسارات إضافية)" data-en="Waste Factor (% – extra routing)">معامل الهدر % <span class="hint-sm">(TIA-568 يوصي بـ 15%)</span></label>
+            <input type="number" id="wasteFactor" value="15" min="5" max="40" />
+          </div>
+          <div class="form-group">
+            <label data-ar="طول الكابل الأقصى المسموح (م)" data-en="Max Allowed Cable Run (m)">الحد الأقصى للطول (م)</label>
+            <input type="number" id="maxCableRun" value="100" min="10" max="2000" />
+          </div>
+          <div class="info-box">
+            <div class="info-icon">ℹ️</div>
+            <div class="info-text" data-ar="وفق TIA-568-C.2 الحد الأقصى لـ Cat6/6A هو 100م. لمسافات أكبر يُنصح بالألياف الضوئية." data-en="Per TIA-568-C.2, max for Cat6/6A is 100m. For longer runs, fiber is recommended.">وفق TIA-568-C.2 الحد الأقصى لـ Cat6/6A هو 100م. لمسافات أكبر يُنصح بالألياف الضوئية.</div>
+          </div>
+          <button class="btn-primary mt-20" onclick="calculateCables()">
+            <span data-ar="احسب الكابلات" data-en="Calculate Cables">احسب الكابلات</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="card mt-20" id="cableSummaryCard">
+        <h3 class="card-title" data-ar="ملخص الكابلات" data-en="Cable Summary">ملخص الكابلات</h3>
+        <div id="cableSummaryContent">
+          <p class="hint" data-ar="اضغط 'احسب الكابلات' لرؤية النتائج" data-en="Press 'Calculate Cables' to see results">اضغط 'احسب الكابلات' لرؤية النتائج</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== TAB: LABOR ====== -->
+    <section class="tab-content" id="tab-labor">
+      <div class="section-header">
+        <h2 data-ar="حساب العمالة وأيام العمل" data-en="Labor & Workdays Calculation">حساب العمالة وأيام العمل</h2>
+        <p class="section-desc" data-ar="تقدير أيام العمل بناءً على عدد الكاميرات والفريق" data-en="Estimate workdays based on camera count and team">تقدير أيام العمل بناءً على عدد الكاميرات والفريق <span class="optional-tag" data-ar="قابل للتعديل" data-en="Editable">قابل للتعديل</span></p>
+      </div>
+      <div class="card-grid two-col">
+        <div class="card">
+          <h3 class="card-title" data-ar="إعداد الفريق" data-en="Team Setup">إعداد الفريق</h3>
+          <div class="form-group">
+            <label data-ar="عدد أفراد الفريق" data-en="Team Size">عدد أفراد الفريق</label>
+            <input type="number" id="teamSize" value="4" min="1" max="50" onchange="calculateLabor()" />
+          </div>
+          <div class="form-group">
+            <label data-ar="ساعات العمل اليومية" data-en="Daily Working Hours">ساعات العمل اليومية</label>
+            <input type="number" id="workHoursPerDay" value="8" min="4" max="12" onchange="calculateLabor()" />
+          </div>
+          <div class="form-group">
+            <label data-ar="مستوى الصعوبة" data-en="Difficulty Level">مستوى صعوبة الموقع</label>
+            <select id="difficultyLevel" onchange="calculateLabor()">
+              <option value="1.0">سهل – مبنى جديد مع مسارات جاهزة (×1.0)</option>
+              <option value="1.2" selected>متوسط – مبنى قائم (×1.2)</option>
+              <option value="1.5">صعب – تجديد بمبنى مشغول (×1.5)</option>
+              <option value="1.8">صعب جداً – ارتفاعات / بيئة صناعية (×1.8)</option>
+              <option value="2.0">استثنائي – كل الظروف الصعبة (×2.0)</option>
+            </select>
+          </div>
+        </div>
+        <div class="card">
+          <h3 class="card-title" data-ar="معدلات الإنجاز" data-en="Productivity Rates">معدلات الإنجاز <span class="optional-tag">قابلة للتعديل</span></h3>
+          <div class="rate-item">
+            <label data-ar="تركيب كاميرا + تثبيت (ساعة/كاميرا)" data-en="Camera install (hr/cam)">تركيب كاميرا (ساعة/كاميرا)</label>
+            <input type="number" id="rateInstallCam" value="1.5" min="0.5" max="8" step="0.25" onchange="calculateLabor()" />
+          </div>
+          <div class="rate-item">
+            <label data-ar="مد كابل (ساعة/100م)" data-en="Cable pull (hr/100m)">مد كابل (ساعة/100م)</label>
+            <input type="number" id="rateCablePull" value="2" min="0.5" max="10" step="0.5" onchange="calculateLabor()" />
+          </div>
+          <div class="rate-item">
+            <label data-ar="تركيب رك + توصيل (ساعة/رك)" data-en="Rack install (hr/rack)">تركيب رك (ساعة/رك)</label>
+            <input type="number" id="rateRackInstall" value="4" min="1" max="16" step="0.5" onchange="calculateLabor()" />
+          </div>
+          <div class="rate-item">
+            <label data-ar="برمجة + اختبار (ساعة/كاميرا)" data-en="Config & Test (hr/cam)">برمجة واختبار (ساعة/كاميرا)</label>
+            <input type="number" id="rateConfig" value="0.5" min="0.1" max="4" step="0.1" onchange="calculateLabor()" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt-20">
+        <h3 class="card-title" data-ar="نتائج حساب العمالة" data-en="Labor Calculation Results">نتائج حساب العمالة</h3>
+        <div class="stats-row" id="laborStats">
+          <div class="stat-box">
+            <div class="stat-num" id="totalHours">–</div>
+            <div class="stat-label" data-ar="إجمالي الساعات" data-en="Total Hours">إجمالي الساعات</div>
+          </div>
+          <div class="stat-box highlight">
+            <div class="stat-num" id="totalDays">–</div>
+            <div class="stat-label" data-ar="أيام العمل" data-en="Workdays">أيام العمل</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num" id="installHours">–</div>
+            <div class="stat-label" data-ar="ساعات التركيب" data-en="Install Hours">ساعات التركيب</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num" id="cableHours">–</div>
+            <div class="stat-label" data-ar="ساعات الكابلات" data-en="Cable Hours">ساعات الكابلات</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num" id="configHours">–</div>
+            <div class="stat-label" data-ar="ساعات البرمجة" data-en="Config Hours">ساعات البرمجة</div>
+          </div>
+        </div>
+        <div id="laborBreakdownTable"></div>
+        <button class="btn-primary mt-15" onclick="calculateLabor()">
+          <span data-ar="إعادة الحساب" data-en="Recalculate">إعادة الحساب</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ====== TAB: FLOOR PLAN ====== -->
+    <section class="tab-content" id="tab-floorplan">
+      <div class="section-header">
+        <h2 data-ar="مخطط الطابق وتوزيع الكاميرات" data-en="Floor Plan & Camera Placement">مخطط الطابق وتوزيع الكاميرات</h2>
+        <p class="section-desc" data-ar="ارفع مخطط PDF/صورة وحدد مواقع الكاميرات بالنقر" data-en="Upload floor plan PDF/image and click to place cameras">ارفع مخطط PDF/صورة وحدد مواقع الكاميرات بالنقر</p>
+      </div>
+      <div class="card">
+        <div class="floorplan-toolbar">
+          <div class="toolbar-group">
+            <label class="upload-btn" for="floorplanUpload">
+              <span>📁</span>
+              <span data-ar="رفع مخطط" data-en="Upload Plan">رفع مخطط</span>
+              <input type="file" id="floorplanUpload" accept="image/*,application/pdf" style="display:none" onchange="loadFloorplan(this)" />
+            </label>
+            <select id="floorSelector" class="floor-select">
+              <option value="0">الطابق الأرضي</option>
+            </select>
+          </div>
+          <div class="toolbar-group tool-btns">
+            <button class="tool-btn active" id="toolCamera" onclick="setTool('camera')" title="Place Camera">
+              📷 <span data-ar="كاميرا داخلي" data-en="Indoor Cam">كاميرا داخلي</span>
+            </button>
+            <button class="tool-btn" id="toolCameraOut" onclick="setTool('camera-outdoor')" title="Outdoor Camera">
+              🏠 <span data-ar="كاميرا خارجي" data-en="Outdoor Cam">كاميرا خارجي</span>
+            </button>
+            <button class="tool-btn" id="toolRack" onclick="setTool('rack')" title="Place Rack">
+              🗄️ <span data-ar="رك" data-en="Rack">رك</span>
+            </button>
+            <button class="tool-btn" id="toolEraser" onclick="setTool('eraser')" title="Erase">
+              🗑️ <span data-ar="حذف" data-en="Erase">حذف</span>
+            </button>
+            <button class="tool-btn" id="toolSelect" onclick="setTool('select')" title="Select">
+              🖱️ <span data-ar="تحديد" data-en="Select">تحديد</span>
+            </button>
+          </div>
+          <div class="toolbar-group">
+            <button class="btn-sm" onclick="clearCanvas()">🧹 <span data-ar="مسح الكل" data-en="Clear All">مسح الكل</span></button>
+            <button class="btn-sm" onclick="exportFloorplanPNG()">💾 <span data-ar="تصدير PNG" data-en="Export PNG">تصدير PNG</span></button>
+          </div>
+        </div>
+        <div class="canvas-wrapper">
+          <canvas id="floorplanCanvas"></canvas>
+          <div class="canvas-placeholder" id="canvasPlaceholder">
+            <div class="placeholder-icon">🗺️</div>
+            <p data-ar="ارفع مخطط الطابق أو ابدأ بالنقر لتحديد مواقع الكاميرات" data-en="Upload a floor plan or click to start placing cameras">ارفع مخطط الطابق أو ابدأ بالنقر لتحديد مواقع الكاميرات</p>
+          </div>
+        </div>
+        <div class="floorplan-legend">
+          <div class="legend-item"><span class="legend-dot indoor-dot"></span><span data-ar="كاميرا داخلية" data-en="Indoor Camera">كاميرا داخلية</span></div>
+          <div class="legend-item"><span class="legend-dot outdoor-dot"></span><span data-ar="كاميرا خارجية" data-en="Outdoor Camera">كاميرا خارجية</span></div>
+          <div class="legend-item"><span class="legend-dot rack-dot"></span><span data-ar="رك" data-en="Rack">رك</span></div>
+        </div>
+        <div class="floorplan-count" id="floorplanCount">
+          <span data-ar="كاميرات على المخطط:" data-en="Cameras on plan:">كاميرات على المخطط:</span> <strong id="fpCamCount">0</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== TAB: REPORT ====== -->
+    <section class="tab-content" id="tab-report">
+      <div class="section-header">
+        <h2 data-ar="التقارير والتصدير" data-en="Reports & Export">التقارير والتصدير</h2>
+        <p class="section-desc" data-ar="توليد تقارير احترافية بالعربي والإنكليزي" data-en="Generate professional reports in Arabic and English">توليد تقارير احترافية بالعربي والإنكليزي</p>
+      </div>
+
+      <!-- Preview -->
+      <div class="card mb-20">
+        <h3 class="card-title" data-ar="معاينة التقرير" data-en="Report Preview">معاينة التقرير</h3>
+        <div id="reportPreview" class="report-preview">
+          <div class="report-preview-header">
+            <div class="rp-logo">
+              <svg width="60" height="60" viewBox="0 0 60 60" fill="none"><rect width="60" height="60" rx="12" fill="#0a2540"/><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="#00c6ff" font-family="Rajdhani,sans-serif" font-weight="700" font-size="17">EJAF</text></svg>
+            </div>
+            <div class="rp-title-block">
+              <h2 class="rp-company">Ejaf Technology</h2>
+              <h3 class="rp-project" id="rp-projectName">–</h3>
+              <p class="rp-meta" id="rp-meta">–</p>
+            </div>
+            <div class="rp-powered">Powered by<br/><strong>Siwar</strong></div>
+          </div>
+          <div id="reportBody"></div>
+        </div>
+      </div>
+
+      <!-- Report Scope Selector -->
+      <div class="card mb-20">
+        <h3 class="card-title">📋 محتوى التقرير — Report Scope</h3>
+        <div class="report-scope-grid">
+          <label class="scope-item"><input type="checkbox" id="rsc-project" checked /> معلومات المشروع</label>
+          <label class="scope-item"><input type="checkbox" id="rsc-cameras" checked /> الكاميرات والطوابق</label>
+          <label class="scope-item"><input type="checkbox" id="rsc-racks"   checked /> الركات والـ UPS</label>
+          <label class="scope-item"><input type="checkbox" id="rsc-cables"  checked /> الكابلات</label>
+          <label class="scope-item"><input type="checkbox" id="rsc-fiber"   checked /> الفايبر أوبتيك</label>
+          <label class="scope-item"><input type="checkbox" id="rsc-network" checked /> الشبكة والسويتشات</label>
+          <label class="scope-item"><input type="checkbox" id="rsc-vw"      checked /> Video Wall وغرفة المراقبة</label>
+          <label class="scope-item"><input type="checkbox" id="rsc-labor"   checked /> العمالة وأيام العمل</label>
+        </div>
+      </div>
+
+      <div class="export-actions">
+        <button class="export-btn pdf-btn" onclick="exportPDF('ar')">
+          <span class="export-icon">📄</span>
+          <span class="export-label">تصدير PDF عربي</span>
+        </button>
+        <button class="export-btn pdf-btn" onclick="exportPDF('en')">
+          <span class="export-icon">📄</span>
+          <span class="export-label">Export PDF English</span>
+        </button>
+        <button class="export-btn excel-btn" onclick="exportExcel()">
+          <span class="export-icon">📊</span>
+          <span class="export-label">تصدير Excel (كامل)</span>
+        </button>
+        <button class="export-btn" onclick="generateReport()">
+          <span class="export-icon">🔄</span>
+          <span class="export-label">تحديث المعاينة</span>
+        </button>
+      </div>
+    </section>
+
+
+    <!-- ====== TAB: FIBER OPTIC ====== -->
+    <section class="tab-content" id="tab-fiber">
+      <div class="section-header">
+        <h2>💡 الفايبر أوبتيك — Fiber Optic Infrastructure</h2>
+        <p class="section-desc">ISO/IEC 11801 · TIA-568.3-D · IEC 60793 · ITU-T G.652/G.657</p>
+      </div>
+
+      <!-- Scenario Selector -->
+      <div class="card mb-20">
+        <h3 class="card-title">🔀 سيناريو الفايبر</h3>
+        <div class="fiber-scenario-btns">
+          <button class="scenario-btn active" id="scenIntra" onclick="setFiberScenario('intra')">
+            🏢 داخل المبنى<br/><span>Intra-Building</span>
+          </button>
+          <button class="scenario-btn" id="scenInter" onclick="setFiberScenario('inter')">
+            🏙️ بين المباني<br/><span>Inter-Building / Campus</span>
+          </button>
+          <button class="scenario-btn" id="scenBoth" onclick="setFiberScenario('both')">
+            🌐 الاثنان معاً<br/><span>Both</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ROW 1: Fiber Type + Cable Specs -->
+      <div class="card-grid two-col">
+        <div class="card">
+          <h3 class="card-title">📡 نوع الكابل الضوئي</h3>
+          <div class="form-group">
+            <label>نوع الفايبر الرئيسي</label>
+            <select id="fiberType" onchange="updateFiberSpecs()">
+              <optgroup label="Single-Mode (SM) — ITU-T G.652 / TIA-568.3-D">
+                <option value="SM-G652D" data-atten="0.35" data-bw="unlimited" data-dist="40000" selected>SM G.652D – OS2 – حتى 40 كم (الأكثر شيوعاً)</option>
+                <option value="SM-G657A1" data-atten="0.35" data-bw="unlimited" data-dist="40000">SM G.657A1 – Bend-Insensitive – مناسب للمباني</option>
+                <option value="SM-G657A2" data-atten="0.35" data-bw="unlimited" data-dist="40000">SM G.657A2 – Ultra Bend-Insensitive</option>
+              </optgroup>
+              <optgroup label="Multi-Mode (MM) — IEC 60793-2-10">
+                <option value="MM-OM3" data-atten="2.0" data-bw="2000" data-dist="300">MM OM3 – 50/125µm – 10G حتى 300م</option>
+                <option value="MM-OM4" data-atten="2.0" data-bw="4700" data-dist="400">MM OM4 – 50/125µm – 10G حتى 400م (Laser-Opt.)</option>
+                <option value="MM-OM5" data-atten="2.0" data-bw="28000" data-dist="400">MM OM5 – 50/125µm – SWDM4 – 40G/100G</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <!-- Fiber Specs Display -->
+          <div class="fiber-specs-box" id="fiberSpecsBox">
+            <div class="fspec-grid">
+              <div class="fspec-item"><span class="fspec-val" id="fspecAtten">0.35</span><span class="fspec-lbl">Attenuation (dB/km)</span></div>
+              <div class="fspec-item"><span class="fspec-val" id="fspecBW">∞</span><span class="fspec-lbl">Bandwidth (MHz·km)</span></div>
+              <div class="fspec-item"><span class="fspec-val" id="fspecDist">40 km</span><span class="fspec-lbl">Max Distance</span></div>
+              <div class="fspec-item"><span class="fspec-val" id="fspecCore">9/125</span><span class="fspec-lbl">Core/Cladding (µm)</span></div>
+            </div>
+          </div>
+
+          <div class="form-group mt-15">
+            <label>عدد الكورات (Fiber Cores)</label>
+            <select id="fiberCores">
+              <optgroup label="داخل المبنى — Indoor">
+                <option value="2">2 كور (Point-to-Point)</option>
+                <option value="4">4 كور</option>
+                <option value="6">6 كور (3 رابط + احتياط)</option>
+                <option value="8">8 كور</option>
+                <option value="12" selected>12 كور ⭐ (الأكثر شيوعاً)</option>
+                <option value="24">24 كور</option>
+              </optgroup>
+              <optgroup label="بين المباني — Campus Backbone">
+                <option value="24-campus">24 كور (Campus Standard)</option>
+                <option value="48-campus">48 كور (TIA-942 Tier II)</option>
+                <option value="72-campus">72 كور</option>
+                <option value="96-campus">96 كور (Large Campus)</option>
+                <option value="144-campus">144 كور (Data Center Backbone)</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>نوع Jacket الكابل</label>
+            <select id="fiberJacket">
+              <option value="LSZH">LSZH – Low Smoke Zero Halogen (داخلي – IEC 60332-1)</option>
+              <option value="PVC">PVC – Indoor Standard</option>
+              <option value="HDPE">HDPE – خارجي/أرضي (Underground)</option>
+              <option value="Armored">Armored – Steel Wire (حماية عالية)</option>
+              <option value="ADSS">ADSS – Aerial (هوائي بدون معدن)</option>
+              <option value="Figure8">Figure-8 – Self-Supporting Aerial</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>براند الكابل الضوئي</label>
+            <select id="fiberBrand">
+              <optgroup label="Tier 1">
+                <option value="Corning">Corning (USA) – InfiniCor / SMF-28</option>
+                <option value="CommScope">CommScope (USA)</option>
+                <option value="Prysmian">Prysmian Group (Italy)</option>
+                <option value="Nexans">Nexans (France)</option>
+              </optgroup>
+              <optgroup label="Tier 2">
+                <option value="Draka">Draka / Prysmian</option>
+                <option value="OFS">OFS (Furukawa)</option>
+                <option value="Sumitomo">Sumitomo Electric (Japan)</option>
+                <option value="LS-Vina">LS Cable (Korea)</option>
+                <option value="FiberHome">FiberHome (China)</option>
+              </optgroup>
+            </select>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">📐 حساب أطوال الفايبر</h3>
+
+          <!-- Intra-Building Runs -->
+          <div id="fiberIntraSection">
+            <div class="fiber-section-label">🏢 داخل المبنى — Riser / Backbone</div>
+            <div class="form-group">
+              <label>عدد الركات المراد ربطها</label>
+              <input type="number" id="fiberIntraRacks" value="3" min="2" max="50" onchange="calcFiber()" />
+            </div>
+            <div class="form-group">
+              <label>متوسط المسافة بين الركات (م) <span class="optional-tag">قابل للتعديل</span></label>
+              <input type="number" id="fiberIntraDist" value="60" min="5" max="1000" step="5" onchange="calcFiber()" />
+            </div>
+            <div class="form-group">
+              <label>معامل هدر الفايبر % <span class="hint-sm">(TIA-568: 15% slack)</span></label>
+              <input type="number" id="fiberWaste" value="15" min="5" max="30" onchange="calcFiber()" />
+            </div>
+          </div>
+
+          <!-- Inter-Building Runs -->
+          <div id="fiberInterSection" style="display:none">
+            <div class="fiber-section-label" style="background:rgba(255,123,0,0.1);border-color:rgba(255,123,0,0.3);color:var(--outdoor)">🏙️ بين المباني — Campus Backbone</div>
+            <div id="buildingRunsContainer">
+              <div class="building-run-row">
+                <input type="text"   class="br-from" placeholder="من: مبنى A" value="Building A" />
+                <span class="br-arrow">→</span>
+                <input type="text"   class="br-to"   placeholder="إلى: مبنى B" value="Building B" />
+                <input type="number" class="br-dist"  placeholder="م" value="150" min="10" max="50000" onchange="calcFiber()" />
+                <span class="br-unit">م</span>
+                <button class="btn-icon-del" onclick="this.closest('.building-run-row').remove(); calcFiber()">✕</button>
+              </div>
+            </div>
+            <button class="btn-sm mt-10" onclick="addBuildingRun()">+ إضافة مسار</button>
+          </div>
+
+          <button class="btn-primary mt-15" onclick="calcFiber()">⚡ احسب الفايبر</button>
+        </div>
+      </div>
+
+      <!-- ODF + Accessories -->
+      <div class="card-grid two-col mt-20">
+        <div class="card">
+          <h3 class="card-title">🔲 ODF — Optical Distribution Frame</h3>
+          <div class="form-group">
+            <label>نوع ODF</label>
+            <select id="odfType">
+              <optgroup label="Rack-Mount ODF">
+                <option value="1U-12">1U Patch Panel – 12 Port (LC/SC)</option>
+                <option value="1U-24" selected>1U Patch Panel – 24 Port ⭐</option>
+                <option value="2U-48">2U Patch Panel – 48 Port</option>
+                <option value="4U-96">4U ODF Box – 96 Port</option>
+              </optgroup>
+              <optgroup label="Wall-Mount ODF">
+                <option value="WM-12">Wall Box – 12 Port</option>
+                <option value="WM-24">Wall Box – 24 Port</option>
+                <option value="WM-48">Wall Box – 48 Port</option>
+              </optgroup>
+              <optgroup label="Floor-Standing ODF">
+                <option value="FS-96">Floor ODF – 96 Port</option>
+                <option value="FS-144">Floor ODF – 144 Port</option>
+                <option value="FS-288">Floor ODF – 288 Port (Large Campus)</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>نوع Connector</label>
+            <select id="fiberConnector">
+              <option value="LC-UPC">LC/UPC – أكثر شيوعاً في IP Networks</option>
+              <option value="LC-APC">LC/APC – خسارة أقل (0.1dB) ← مفضل</option>
+              <option value="SC-UPC">SC/UPC – Standard Telecom</option>
+              <option value="SC-APC">SC/APC – PON / FTTH</option>
+              <option value="ST">ST – Legacy Networks</option>
+              <option value="MPO-12">MPO/MTP – 12F (Data Center)</option>
+              <option value="MPO-24">MPO/MTP – 24F (High Density)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>براند ODF / Accessories</label>
+            <select id="odfBrand">
+              <option value="Corning-ODF">Corning Cable Systems</option>
+              <option value="Panduit-ODF">Panduit FiberRunner</option>
+              <option value="CommScope-ODF">CommScope InstaPatch</option>
+              <option value="Legrand-ODF">Legrand LCS³</option>
+              <option value="Huber-ODF">Huber+Suhner</option>
+              <option value="Rosenberger">Rosenberger (Germany)</option>
+              <option value="Local-ODF">Local Brand</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">🔧 Accessories — ملحقات الفايبر</h3>
+          <div class="fiber-acc-list">
+            <div class="fiber-acc-row">
+              <span class="acc-name">Fiber Patchcord (LC-LC Duplex)</span>
+              <select class="acc-len">
+                <option value="1">1م</option>
+                <option value="2" selected>2م ⭐</option>
+                <option value="3">3م</option>
+                <option value="5">5م</option>
+                <option value="10">10م</option>
+              </select>
+              <input type="number" class="acc-qty" value="0" min="0" placeholder="عدد" id="patchcordQty" onchange="calcFiber()" />
+              <span class="acc-unit">قطعة</span>
+            </div>
+            <div class="fiber-acc-row">
+              <span class="acc-name">Fiber Pigtail (LC/APC)</span>
+              <select class="acc-len">
+                <option value="1">1م</option>
+                <option value="1.5" selected>1.5م</option>
+              </select>
+              <input type="number" class="acc-qty" value="0" min="0" id="pigtailQty" onchange="calcFiber()" />
+              <span class="acc-unit">قطعة</span>
+            </div>
+            <div class="fiber-acc-row">
+              <span class="acc-name">Splice Protection Sleeve (60mm)</span>
+              <span class="acc-len-fixed">–</span>
+              <input type="number" class="acc-qty" value="0" min="0" id="spliceSleeveQty" onchange="calcFiber()" />
+              <span class="acc-unit">قطعة</span>
+            </div>
+            <div class="fiber-acc-row">
+              <span class="acc-name">Fiber Tray (Splice Tray – 12F)</span>
+              <span class="acc-len-fixed">–</span>
+              <input type="number" class="acc-qty" value="0" min="0" id="spliceTrayQty" />
+              <span class="acc-unit">قطعة</span>
+            </div>
+            <div class="fiber-acc-row">
+              <span class="acc-name">Fiber Conduit / Innerduct (م)</span>
+              <span class="acc-len-fixed">–</span>
+              <input type="number" class="acc-qty" value="0" min="0" id="conduitQty" />
+              <span class="acc-unit">متر</span>
+            </div>
+            <div class="fiber-acc-row">
+              <span class="acc-name">Cable Tie / Velcro Straps</span>
+              <span class="acc-len-fixed">–</span>
+              <input type="number" class="acc-qty" value="0" min="0" id="cableTieQty" />
+              <span class="acc-unit">علبة</span>
+            </div>
+            <div class="fiber-acc-row">
+              <span class="acc-name">Fiber Label Tags</span>
+              <span class="acc-len-fixed">–</span>
+              <input type="number" class="acc-qty" value="0" min="0" id="labelQty" />
+              <span class="acc-unit">مجموعة</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Splicing Section -->
+      <div class="card mt-20">
+        <h3 class="card-title">🔥 نقاط اللحام — Fiber Splicing (IEC 61300-3-4)</h3>
+        <div class="card-grid two-col">
+          <div>
+            <div class="form-group">
+              <label>نوع اللحام</label>
+              <select id="spliceType">
+                <option value="fusion">Fusion Splice ⭐ (أفضل – خسارة ≤0.02 dB/splice)</option>
+                <option value="mechanical">Mechanical Splice (خسارة ≤0.5 dB/splice)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>عدد نقاط اللحام (يُحسب تلقائياً أو أدخل يدوياً) <span class="optional-tag">قابل للتعديل</span></label>
+              <input type="number" id="splicePoints" value="0" min="0" onchange="calcFiber()" />
+            </div>
+            <div class="form-group">
+              <label>معدل وقت اللحام (دقيقة/نقطة) <span class="optional-tag">قابل للتعديل</span></label>
+              <input type="number" id="spliceRateMin" value="15" min="5" max="60" />
+            </div>
+            <div class="form-group">
+              <label>براند جهاز اللحام (Fusion Splicer)</label>
+              <select id="splicerBrand">
+                <option value="Fujikura">Fujikura (Japan) – FSM Series ⭐</option>
+                <option value="Sumitomo">Sumitomo Electric – TYPE-Q</option>
+                <option value="INNO">INNO Instrument (Korea)</option>
+                <option value="Ilsintech">Ilsintech (Korea)</option>
+                <option value="DVP">DVP (China)</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <div class="form-group">
+              <label>OTDR Test مطلوب؟</label>
+              <select id="otdrTest">
+                <option value="yes-both">نعم – طرفين (IEC 61280-4-2 موصى)</option>
+                <option value="yes-one">نعم – طرف واحد</option>
+                <option value="no">لا</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Power Meter / Light Source Test</label>
+              <select id="powerMeterTest">
+                <option value="yes">نعم – إلزامي (TIA-526-14)</option>
+                <option value="no">لا</option>
+              </select>
+            </div>
+            <div class="info-box mt-10">
+              <div class="info-icon">📋</div>
+              <div class="info-text">
+                IEC 61300-3-4: الخسارة المسموحة للـ Fusion Splice ≤ 0.1 dB.<br/>
+                TIA-568.3-D: الميزانية الضوئية الكاملة (Link Loss Budget) تحسب بـ:<br/>
+                <strong>Total Loss = (Splice × 0.1) + (Connector × 0.75) + (Cable × Atten × km)</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fiber Calculation Results -->
+      <div class="card mt-20" id="fiberResultsCard">
+        <h3 class="card-title">📊 نتائج حساب الفايبر</h3>
+        <div id="fiberResultsContent">
+          <p class="hint">اضغط "احسب الفايبر" لعرض النتائج</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== TAB: NETWORK ====== -->
+    <section class="tab-content" id="tab-network">
+      <div class="section-header">
+        <h2>🌐 توبولوجيا الشبكة — Network Topology</h2>
+        <p class="section-desc">IEEE 802.1Q · IEEE 802.3 · TIA-942 · Cisco 3-Tier Architecture</p>
+      </div>
+
+      <!-- Topology Diagram -->
+      <div class="card mb-20">
+        <h3 class="card-title">🗺️ هيكل الشبكة المقترح</h3>
+        <div class="topology-diagram">
+          <div class="topo-layer core-layer">
+            <div class="topo-label">Core Layer — NVR/VMS Server</div>
+            <div class="topo-devices" id="topoCore">
+              <div class="topo-device core-dev">🖥️ NVR/VMS<br/><span id="topoNVRCount">–</span></div>
+              <div class="topo-device core-dev">🔀 Core Switch<br/><span>Layer 3</span></div>
+            </div>
+          </div>
+          <div class="topo-arrow">↕ Fiber Backbone (SM/MM)</div>
+          <div class="topo-layer dist-layer">
+            <div class="topo-label">Distribution Layer — IDF per Floor/Zone</div>
+            <div class="topo-devices" id="topoDistribution">
+              <div class="topo-device dist-dev">🗄️ Floor Rack<br/><span>Distribution Switch</span></div>
+            </div>
+          </div>
+          <div class="topo-arrow">↕ Cat6A / Fiber Drop</div>
+          <div class="topo-layer access-layer">
+            <div class="topo-label">Access Layer — PoE Switches → Cameras</div>
+            <div class="topo-devices" id="topoAccess">
+              <div class="topo-device access-dev">🔌 PoE Switch<br/><span>Access Layer</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-grid two-col">
+        <!-- Core Switch -->
+        <div class="card">
+          <h3 class="card-title">🔀 Core Switch — الرك الرئيسي</h3>
+          <div class="form-group">
+            <label>براند السويتش</label>
+            <select id="coreSwitchBrand">
+              <optgroup label="Enterprise Tier 1">
+                <option value="Cisco-Cat">Cisco Catalyst 9000 Series</option>
+                <option value="Cisco-Nexus">Cisco Nexus (Data Center)</option>
+                <option value="HPE-Aruba">HPE Aruba CX Series</option>
+                <option value="Juniper">Juniper EX Series</option>
+                <option value="Extreme">Extreme Networks</option>
+              </optgroup>
+              <optgroup label="Professional Tier 2">
+                <option value="Netgear-Pro">Netgear ProSAFE M Series</option>
+                <option value="TP-Link-Pro">TP-Link TL-SG Series (SMB)</option>
+                <option value="Ubiquiti">Ubiquiti UniFi</option>
+                <option value="Hikvision-SW">Hikvision PoE Switch</option>
+                <option value="Dahua-SW">Dahua PoE Switch</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>موديل / سعة Core Switch</label>
+            <select id="coreSwitchModel">
+              <option value="24G-4SFP">24x 1G + 4x SFP+ Uplink</option>
+              <option value="48G-4SFP" selected>48x 1G + 4x SFP+ ⭐ (الأكثر شيوعاً)</option>
+              <option value="24G-4SFP-PoE">24x 1G PoE+ + 4x SFP+</option>
+              <option value="48G-4SFP-PoE">48x 1G PoE+ + 4x SFP+</option>
+              <option value="24-10G">24x 10G SFP+</option>
+              <option value="48-10G">48x 10G SFP+ (High Performance)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>SFP Modules (Fiber Uplink)</label>
+            <select id="sfpType">
+              <option value="SFP-1G-SX">SFP 1G-SX – MM – 550م</option>
+              <option value="SFP-1G-LX" selected>SFP 1G-LX – SM – 10 كم ⭐</option>
+              <option value="SFP-1G-LH">SFP 1G-LH – SM – 40 كم</option>
+              <option value="SFP+-10G-SR">SFP+ 10G-SR – MM – 300م</option>
+              <option value="SFP+-10G-LR">SFP+ 10G-LR – SM – 10 كم</option>
+              <option value="SFP+-10G-ER">SFP+ 10G-ER – SM – 40 كم</option>
+              <option value="QSFP-40G">QSFP+ 40G – MPO</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>عدد SFP المطلوبة <span class="optional-tag">قابل للتعديل</span></label>
+            <input type="number" id="sfpQty" value="4" min="1" max="48" />
+          </div>
+        </div>
+
+        <!-- PoE Access Switches -->
+        <div class="card">
+          <h3 class="card-title">🔌 Access Switches — PoE للكاميرات</h3>
+          <div class="form-group">
+            <label>سعة PoE Switch</label>
+            <select id="poeSwitchSize" onchange="calcNetworkSwitches()">
+              <option value="8">8 Port PoE+ (صغير – جدار)</option>
+              <option value="16">16 Port PoE+</option>
+              <option value="24" selected>24 Port PoE+ ⭐ (1U Rack)</option>
+              <option value="48">48 Port PoE+ (2U Rack)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>معيار PoE</label>
+            <select id="poeStandard">
+              <option value="802.3af">IEEE 802.3af – 15.4W/port (كاميرات عادية)</option>
+              <option value="802.3at" selected>IEEE 802.3at (PoE+) – 30W/port ⭐</option>
+              <option value="802.3bt">IEEE 802.3bt (PoE++) – 90W/port (PTZ/Thermal)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>براند PoE Switch</label>
+            <select id="poeSwitchBrand">
+              <option value="Cisco-POE">Cisco Catalyst (Enterprise)</option>
+              <option value="HPE-POE">HPE Aruba</option>
+              <option value="Netgear-POE">Netgear ProSAFE</option>
+              <option value="TP-Link-POE">TP-Link TL-SG Series</option>
+              <option value="Ubiquiti-POE">Ubiquiti UniFi PoE</option>
+              <option value="Hikvision-POE">Hikvision DS-3E Series</option>
+              <option value="Dahua-POE">Dahua PFS Series</option>
+              <option value="Ruijie">Ruijie Networks</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>PoE Budget per Switch (W)</label>
+            <input type="number" id="poeBudget" value="370" min="65" max="740" />
+          </div>
+          <button class="btn-primary mt-10" onclick="calcNetworkSwitches()">⚙️ احسب السويتشات</button>
+        </div>
+      </div>
+
+      <!-- VLAN & Bandwidth -->
+      <div class="card mt-20">
+        <h3 class="card-title">📡 Bandwidth & VLAN Planning</h3>
+        <div class="card-grid two-col">
+          <div>
+            <div class="form-group">
+              <label>معدل Bitrate لكل كاميرا (Mbps)</label>
+              <select id="camBitrate">
+                <option value="2">2 Mbps – CIF / D1 Analog</option>
+                <option value="4">4 Mbps – 1080p H.264</option>
+                <option value="3" selected>3 Mbps – 1080p H.265 ⭐ (موصى)</option>
+                <option value="6">6 Mbps – 4MP H.265</option>
+                <option value="8">8 Mbps – 4K H.265</option>
+                <option value="16">16 Mbps – 4K H.264</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>VLAN مخصص للكاميرات؟</label>
+              <select id="vlanEnabled">
+                <option value="yes" selected>نعم – VLAN منفصل (موصى – أمان أعلى)</option>
+                <option value="no">لا – شبكة مشتركة</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>VLAN ID للكاميرات</label>
+              <input type="number" id="vlanId" value="100" min="2" max="4094" />
+            </div>
+          </div>
+          <div id="bandwidthResults">
+            <div class="bw-result-box">
+              <div class="bw-row"><span>إجمالي Bandwidth المطلوب:</span><span class="bw-val" id="bwTotal">–</span></div>
+              <div class="bw-row"><span>Uplink موصى (Core):</span><span class="bw-val" id="bwUplink">–</span></div>
+              <div class="bw-row"><span>عدد PoE Switches:</span><span class="bw-val" id="netPoeSwitchCount">–</span></div>
+              <div class="bw-row"><span>عدد SFP Uplinks:</span><span class="bw-val" id="netSFPCount">–</span></div>
+              <div class="bw-row"><span>PoE Load تقديري:</span><span class="bw-val" id="netPoeLoad">–</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Network Summary -->
+      <div class="card mt-20" id="networkSummaryCard">
+        <h3 class="card-title">📊 ملخص الشبكة</h3>
+        <div id="networkSummaryContent">
+          <p class="hint">اضغط "احسب السويتشات" لعرض الملخص</p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ====== TAB: VIDEO WALL + CONTROL ROOM ====== -->
+    <section class="tab-content" id="tab-videowall">
+      <div class="section-header">
+        <h2>🖥️ Video Wall وغرفة المراقبة — Control Room Design</h2>
+        <p class="section-desc">CEDIA / AVIXA (InfoComm) · IEC 62676-4 · ISO 11064 · NFPA 72 · EN 50132-7</p>
+      </div>
+
+      <!-- ── ROW 1: Display System ── -->
+      <div class="card-grid two-col">
+
+        <!-- Video Wall Config -->
+        <div class="card">
+          <h3 class="card-title">📺 Video Wall — نظام الشاشات</h3>
+          <div class="form-group">
+            <label>نوع نظام العرض</label>
+            <select id="displayType" onchange="updateDisplayCalc()">
+              <optgroup label="Video Wall Systems">
+                <option value="LCD-Wall">LCD Video Wall (46"–55") – الأكثر شيوعاً</option>
+                <option value="LED-Wall">Direct View LED Wall (P1.2–P2.5) – احترافي</option>
+                <option value="OLED-Wall">OLED Video Wall – جودة عالية جداً</option>
+                <option value="Laser-Proj">Laser Projection Wall – مساحات كبيرة</option>
+              </optgroup>
+              <optgroup label="Standard Monitors">
+                <option value="Monitor-24">Monitor 24" – مكتب مراقب</option>
+                <option value="Monitor-32">Monitor 32" – مكتب كبير</option>
+                <option value="Monitor-43">Monitor 43" – شاشة تحكم رئيسية</option>
+                <option value="Monitor-55">Monitor 55" – شاشة كبيرة</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <!-- LCD Wall Config -->
+          <div id="lcdWallConfig">
+            <div class="form-group">
+              <label>حجم الشاشة الواحدة</label>
+              <select id="screenSize" onchange="updateDisplayCalc()">
+                <option value="46">46" – 1020×572mm – Bezel 3.5mm</option>
+                <option value="49">49" – 1086×611mm – Bezel 1.7mm</option>
+                <option value="55" selected>55" – 1218×686mm – Bezel 1.7mm ⭐</option>
+                <option value="65">65" – 1440×810mm – Bezel 3.5mm</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>تكوين Video Wall (عرض × ارتفاع)</label>
+              <div style="display:flex;gap:10px;align-items:center">
+                <input type="number" id="vwCols" value="3" min="1" max="16" style="width:70px !important" onchange="updateDisplayCalc()" />
+                <span style="color:var(--text-muted);font-size:14px">×</span>
+                <input type="number" id="vwRows" value="2" min="1" max="8"  style="width:70px !important" onchange="updateDisplayCalc()" />
+                <span style="font-size:12px;color:var(--text-dim)" id="vwTotalScreens">= 6 شاشة</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>براند الشاشات</label>
+              <select id="displayBrand">
+                <optgroup label="Enterprise Tier 1">
+                  <option value="Samsung-VW">Samsung (The Wall / VM Series)</option>
+                  <option value="LG-VW">LG MAGNIT / LAA Series</option>
+                  <option value="Christie">Christie Digital (USA)</option>
+                  <option value="Barco">Barco (Belgium) – Control Rooms</option>
+                  <option value="Planar">Planar Systems (USA)</option>
+                </optgroup>
+                <optgroup label="Professional Tier 2">
+                  <option value="NEC-VW">NEC MultiSync</option>
+                  <option value="Hikvision-VW">Hikvision DS-D Series</option>
+                  <option value="Dahua-VW">Dahua DHL Series</option>
+                  <option value="Uniview-VW">Uniview MW Series</option>
+                  <option value="Absen">Absen LED (China)</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+
+          <!-- Live Wall Preview -->
+          <div class="vw-preview-box" id="vwPreviewBox">
+            <div class="vw-grid" id="vwGrid"></div>
+            <div class="vw-dims" id="vwDims">–</div>
+          </div>
+        </div>
+
+        <!-- Video Wall Controller -->
+        <div class="card">
+          <h3 class="card-title">🔀 Video Wall Controller & Matrix</h3>
+          <div class="form-group">
+            <label>نوع Controller</label>
+            <select id="vwControllerType" onchange="updateDisplayCalc()">
+              <optgroup label="Hardware VW Controllers">
+                <option value="Barco-Ctrl">Barco E2 / S3 – Enterprise ⭐</option>
+                <option value="Christie-Ctrl">Christie Pandoras Box</option>
+                <option value="Hikvision-Ctrl">Hikvision DS-C10S/D Series</option>
+                <option value="Dahua-Ctrl">Dahua NVD-Series Controller</option>
+                <option value="Uniview-Ctrl">Uniview VW Controller</option>
+                <option value="Novastar">Novastar MCTRL (LED)</option>
+              </optgroup>
+              <optgroup label="Software-Based VMS + VW">
+                <option value="Genetec-VW">Genetec Security Center</option>
+                <option value="Milestone-VW">Milestone XProtect</option>
+                <option value="Avigilon-VW">Avigilon Control Center</option>
+                <option value="Hikvision-VMS">Hikvision HikCentral</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Video Matrix Switch</label>
+            <select id="matrixSwitch">
+              <option value="none">بدون Matrix (Controller مدمج)</option>
+              <option value="HDMI-4x4">HDMI Matrix 4×4</option>
+              <option value="HDMI-8x8">HDMI Matrix 8×8</option>
+              <option value="HDMI-16x16">HDMI Matrix 16×16</option>
+              <option value="IP-Matrix">IP Video Matrix (NDI/RTSP)</option>
+              <option value="DVI-Matrix">DVI Matrix (Legacy)</option>
+              <option value="SDI-Matrix">SDI Matrix (Broadcast)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>كابل توصيل الشاشات</label>
+            <select id="displayCableType">
+              <option value="HDMI-2.1">HDMI 2.1 – 4K@120Hz (حتى 10م)</option>
+              <option value="DP-1.4">DisplayPort 1.4 – 8K (حتى 3م)</option>
+              <option value="DVI-D">DVI-D Dual Link (Legacy)</option>
+              <option value="SDI">HD-SDI / 3G-SDI (Broadcast)</option>
+              <option value="IP-HDBaseT">HDBaseT over Cat6A (حتى 100م) ⭐</option>
+              <option value="Fiber-HDMI">Fiber HDMI (مسافات طويلة)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>عدد كاميرات تُعرض في آن واحد (Live View)</label>
+            <input type="number" id="liveViewCams" value="16" min="1" max="256" onchange="updateDisplayCalc()" />
+          </div>
+
+          <!-- Screen recommendation -->
+          <div class="vw-rec-box" id="vwRecBox">
+            <div class="vw-rec-item"><span>التكوين الموصى:</span><span id="recLayout">–</span></div>
+            <div class="vw-rec-item"><span>عدد الشاشات الموصى:</span><span id="recScreens">–</span></div>
+            <div class="vw-rec-item"><span>أبعاد الجدار الكلي:</span><span id="recWallSize">–</span></div>
+            <div class="vw-rec-item"><span>Controller Outputs:</span><span id="recCtrlOut">–</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ROW 2: Control Room Design ── -->
+      <div class="card mt-20">
+        <h3 class="card-title">🏛️ تصميم غرفة المراقبة — ISO 11064 / CEDIA</h3>
+        <div class="card-grid two-col">
+          <div>
+            <div class="form-group">
+              <label>عدد محطات العمل (Operator Workstations)</label>
+              <input type="number" id="operatorCount" value="2" min="1" max="20" onchange="calcControlRoom()" />
+            </div>
+            <div class="form-group">
+              <label>مساحة المنطقة الموصى (م²) للمشغّل الواحد <span class="hint-sm">ISO 11064: 4-6 م²/مشغّل</span></label>
+              <select id="spacePerOperator" onchange="calcControlRoom()">
+                <option value="4">4 م² (ضيق – حد أدنى ISO 11064)</option>
+                <option value="5" selected>5 م² ⭐ (متوسط موصى)</option>
+                <option value="6">6 م² (مريح)</option>
+                <option value="8">8 م² (واسع – مشاريع حكومية)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>نوع إضاءة غرفة المراقبة</label>
+              <select id="roomLighting">
+                <option value="led-dim">LED قابلة للتعتيم (0-100%) – موصى ⭐</option>
+                <option value="led-fixed">LED ثابتة – 300-500 lux</option>
+                <option value="indirect">إضاءة غير مباشرة – 200 lux</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>تكييف مخصص للغرفة؟ <span class="hint-sm">ASHRAE 90-95°F للأجهزة</span></label>
+              <select id="roomAC">
+                <option value="precision">Precision AC – Server Room Grade ⭐</option>
+                <option value="split">Split AC مخصص (حصرياً للغرفة)</option>
+                <option value="shared">مركزي مشترك (غير مفضل للأجهزة)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>أرضية مرفوعة (Raised Floor)؟</label>
+              <select id="raisedFloor">
+                <option value="yes">نعم – 600×600mm Panels (موصى لكابلات)</option>
+                <option value="no">لا – Cable Tray تحت السقف</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <div class="form-group">
+              <label>تحكم في الدخول (Access Control)</label>
+              <select id="accessControl">
+                <option value="biometric">Biometric (بصمة + بطاقة) – Tier 1</option>
+                <option value="card">Card Reader فقط</option>
+                <option value="pin">PIN + Card</option>
+                <option value="none">بدون (مراقبة فقط)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>نظام إنذار حريق مدمج؟</label>
+              <select id="fireSuppression">
+                <option value="clean-agent">Clean Agent (FM-200 / Novec 1230) ⭐</option>
+                <option value="sprinkler">Sprinkler (غير مفضل مع الأجهزة)</option>
+                <option value="detection-only">كاشف حريق فقط (NFPA 72)</option>
+                <option value="none">لا يوجد</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>مستوى الأمان (Security Level)</label>
+              <select id="securityLevel">
+                <option value="1">Level 1 – تجاري بسيط</option>
+                <option value="2" selected>Level 2 – تجاري / مؤسسي ⭐</option>
+                <option value="3">Level 3 – حكومي / بنوك</option>
+                <option value="4">Level 4 – عسكري / نفطي</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>موقع الغرفة في المبنى</label>
+              <select id="roomLocation">
+                <option value="ground">الطابق الأرضي (Ground Floor)</option>
+                <option value="basement">الطابق السفلي (Basement) – مفضل للأمان</option>
+                <option value="middle">طابق وسطي</option>
+                <option value="top">الطابق العلوي</option>
+              </select>
+            </div>
+            <button class="btn-primary mt-10" onclick="calcControlRoom()">
+              ⚙️ احسب متطلبات الغرفة
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Control Room Results -->
+      <div class="card mt-20" id="controlRoomResults">
+        <h3 class="card-title">📊 نتائج تصميم غرفة المراقبة</h3>
+        <div id="controlRoomContent">
+          <p class="hint">اضغط "احسب متطلبات الغرفة" لعرض التوصيات</p>
+        </div>
+      </div>
+
+      <!-- Full Equipment Summary -->
+      <div class="card mt-20" id="vwEquipSummary">
+        <h3 class="card-title">📦 ملخص معدات غرفة المراقبة</h3>
+        <div id="vwEquipContent">
+          <p class="hint">سيظهر بعد الحساب</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    <span>© 2025 <strong>Ejaf Technology</strong> — All Rights Reserved</span>
+    <span class="footer-sep">|</span>
+    <span>Powered by <strong>Siwar</strong></span>
+    <span class="footer-sep">|</span>
+    <span class="footer-std">IEC 62676 · TIA-568.3-D · ISO/IEC 11801 · IEEE 802.3 · ISO 11064 · AVIXA · CEDIA</span>
+  </footer>
+
+  <script src="js/app.js"></script>
 </body>
 </html>
