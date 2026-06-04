@@ -8,11 +8,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Rajdhani:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <!-- jsPDF + xlsx -->
+  <!-- jsPDF + xlsx + PDF.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body>
   <!-- HEADER -->
@@ -824,57 +825,119 @@
     <!-- ====== TAB: FLOOR PLAN ====== -->
     <section class="tab-content" id="tab-floorplan">
       <div class="section-header">
-        <h2 data-ar="مخطط الطابق وتوزيع الكاميرات" data-en="Floor Plan & Camera Placement">مخطط الطابق وتوزيع الكاميرات</h2>
-        <p class="section-desc" data-ar="ارفع مخطط PDF/صورة وحدد مواقع الكاميرات بالنقر" data-en="Upload floor plan PDF/image and click to place cameras">ارفع مخطط PDF/صورة وحدد مواقع الكاميرات بالنقر</p>
+        <h2>🗺️ Floor Plan — مخطط الكاميرات الاحترافي</h2>
+        <p class="section-desc">ارفع مخطط PDF أو صورة — ارسم بدقة مع Zoom / Pan / Snap to Grid</p>
       </div>
-      <div class="card">
-        <div class="floorplan-toolbar">
-          <div class="toolbar-group">
-            <label class="upload-btn" for="floorplanUpload">
-              <span>📁</span>
-              <span data-ar="رفع مخطط" data-en="Upload Plan">رفع مخطط</span>
-              <input type="file" id="floorplanUpload" accept="image/*,application/pdf" style="display:none" onchange="loadFloorplan(this)" />
+      <div class="card" style="padding:0;overflow:hidden">
+
+        <!-- TOOLBAR -->
+        <div class="fp-toolbar">
+
+          <!-- Upload + Floor -->
+          <div class="fp-tg">
+            <label class="fp-upload-btn" for="floorplanUpload">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              رفع مخطط (PDF/صورة)
+              <input type="file" id="floorplanUpload" accept="image/*,application/pdf" style="display:none" onchange="fpLoadFile(this)" />
             </label>
-            <select id="floorSelector" class="floor-select">
-              <option value="0">الطابق الأرضي</option>
+            <select id="floorSelector" class="fp-floor-sel" onchange="fpSwitchFloor(this.value)">
+              <option value="0">الطابق الأرضي (G)</option>
             </select>
           </div>
-          <div class="toolbar-group tool-btns">
-            <button class="tool-btn active" id="toolCamera" onclick="setTool('camera')" title="Place Camera">
-              📷 <span data-ar="كاميرا داخلي" data-en="Indoor Cam">كاميرا داخلي</span>
+
+          <!-- Camera Tools -->
+          <div class="fp-tg fp-tools">
+            <span class="fp-tg-label">كاميرا:</span>
+            <button class="fp-tool active" id="ft-dome"   onclick="fpSetTool('dome')"   title="Dome Camera Indoor">
+              <svg width="20" height="20" viewBox="0 0 40 40"><circle cx="20" cy="20" r="14" fill="#0a2540" stroke="#00c6ff" stroke-width="2"/><ellipse cx="20" cy="20" rx="8" ry="8" fill="#00c6ff" opacity="0.3"/><circle cx="20" cy="20" r="4" fill="#00c6ff"/><path d="M20 6 A14 14 0 0 1 34 20" fill="none" stroke="#00c6ff" stroke-width="1.5" opacity="0.5"/></svg>
+              <span>Dome</span>
             </button>
-            <button class="tool-btn" id="toolCameraOut" onclick="setTool('camera-outdoor')" title="Outdoor Camera">
-              🏠 <span data-ar="كاميرا خارجي" data-en="Outdoor Cam">كاميرا خارجي</span>
+            <button class="fp-tool" id="ft-bullet" onclick="fpSetTool('bullet')" title="Bullet Camera Outdoor">
+              <svg width="20" height="20" viewBox="0 0 40 40"><rect x="8" y="15" width="20" height="10" rx="5" fill="#0a2540" stroke="#ff7b00" stroke-width="2"/><rect x="26" y="17" width="8" height="6" rx="2" fill="#ff7b00" opacity="0.6"/><circle cx="12" cy="20" r="3" fill="#ff7b00"/><line x1="4" y1="20" x2="8" y2="20" stroke="#ff7b00" stroke-width="2"/></svg>
+              <span>Bullet</span>
             </button>
-            <button class="tool-btn" id="toolRack" onclick="setTool('rack')" title="Place Rack">
-              🗄️ <span data-ar="رك" data-en="Rack">رك</span>
+            <button class="fp-tool" id="ft-ptz" onclick="fpSetTool('ptz')" title="PTZ Camera">
+              <svg width="20" height="20" viewBox="0 0 40 40"><circle cx="20" cy="20" r="12" fill="#0a2540" stroke="#a78bfa" stroke-width="2"/><circle cx="20" cy="20" r="6" fill="#a78bfa" opacity="0.4"/><circle cx="20" cy="20" r="3" fill="#a78bfa"/><line x1="20" y1="8" x2="20" y2="4" stroke="#a78bfa" stroke-width="2"/><line x1="32" y1="20" x2="36" y2="20" stroke="#a78bfa" stroke-width="2"/><line x1="20" y1="32" x2="20" y2="36" stroke="#a78bfa" stroke-width="2"/><line x1="8" y1="20" x2="4" y2="20" stroke="#a78bfa" stroke-width="2"/></svg>
+              <span>PTZ</span>
             </button>
-            <button class="tool-btn" id="toolEraser" onclick="setTool('eraser')" title="Erase">
-              🗑️ <span data-ar="حذف" data-en="Erase">حذف</span>
+            <button class="fp-tool" id="ft-thermal" onclick="fpSetTool('thermal')" title="Thermal Camera">
+              <svg width="20" height="20" viewBox="0 0 40 40"><rect x="10" y="12" width="20" height="16" rx="3" fill="#0a2540" stroke="#ff4d6d" stroke-width="2"/><rect x="14" y="16" width="12" height="8" rx="1" fill="#ff4d6d" opacity="0.3"/><circle cx="20" cy="20" r="3" fill="#ff4d6d"/><path d="M15 10 Q20 6 25 10" fill="none" stroke="#ff4d6d" stroke-width="1.5"/></svg>
+              <span>Thermal</span>
             </button>
-            <button class="tool-btn" id="toolSelect" onclick="setTool('select')" title="Select">
-              🖱️ <span data-ar="تحديد" data-en="Select">تحديد</span>
+            <button class="fp-tool" id="ft-rack" onclick="fpSetTool('rack')" title="Rack">
+              <svg width="20" height="20" viewBox="0 0 40 40"><rect x="10" y="6" width="20" height="28" rx="2" fill="#0a2540" stroke="#00e5a0" stroke-width="2"/><rect x="13" y="10" width="14" height="3" rx="1" fill="#00e5a0" opacity="0.7"/><rect x="13" y="15" width="14" height="3" rx="1" fill="#00e5a0" opacity="0.5"/><rect x="13" y="20" width="14" height="3" rx="1" fill="#00e5a0" opacity="0.3"/><rect x="13" y="25" width="14" height="3" rx="1" fill="#00e5a0" opacity="0.2"/></svg>
+              <span>Rack</span>
             </button>
           </div>
-          <div class="toolbar-group">
-            <button class="btn-sm" onclick="clearCanvas()">🧹 <span data-ar="مسح الكل" data-en="Clear All">مسح الكل</span></button>
-            <button class="btn-sm" onclick="exportFloorplanPNG()">💾 <span data-ar="تصدير PNG" data-en="Export PNG">تصدير PNG</span></button>
+
+          <!-- Edit Tools -->
+          <div class="fp-tg fp-tools">
+            <span class="fp-tg-label">تعديل:</span>
+            <button class="fp-tool" id="ft-select"  onclick="fpSetTool('select')"  title="Select & Move">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-7 1-3 7z"/></svg>
+              <span>تحديد</span>
+            </button>
+            <button class="fp-tool" id="ft-erase" onclick="fpSetTool('erase')" title="Erase">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20H7L3 16l10-10 7 7-3.5 3.5"/><path d="M6.1 15.1l2.8 2.8"/></svg>
+              <span>حذف</span>
+            </button>
+          </div>
+
+          <!-- View Tools -->
+          <div class="fp-tg fp-tools">
+            <span class="fp-tg-label">عرض:</span>
+            <button class="fp-tool" onclick="fpZoom(1.2)" title="Zoom In">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              <span>+</span>
+            </button>
+            <button class="fp-tool" onclick="fpZoom(0.8)" title="Zoom Out">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              <span>−</span>
+            </button>
+            <button class="fp-tool" onclick="fpResetView()" title="Fit">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+              <span>Fit</span>
+            </button>
+            <button class="fp-tool" id="ft-snap" onclick="fpToggleSnap()" title="Snap to Grid">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+              <span>Grid</span>
+            </button>
+          </div>
+
+          <!-- Actions -->
+          <div class="fp-tg">
+            <button class="fp-action-btn" onclick="fpClear()">🧹 مسح</button>
+            <button class="fp-action-btn" onclick="fpExportPNG()">💾 PNG</button>
+            <button class="fp-action-btn primary" onclick="fpExportPDF()">📄 PDF</button>
           </div>
         </div>
-        <div class="canvas-wrapper">
+
+        <!-- STATUS BAR -->
+        <div class="fp-statusbar">
+          <span id="fpStatus">جاهز — اختر أداة وانقر على المخطط</span>
+          <span id="fpZoomLevel">100%</span>
+          <span>كاميرات: <strong id="fpCamCount">0</strong></span>
+          <span>ركات: <strong id="fpRackCount">0</strong></span>
+          <span id="fpSnapStatus" style="color:var(--text-dim)">Grid: OFF</span>
+        </div>
+
+        <!-- CANVAS -->
+        <div class="fp-canvas-wrap" id="fpCanvasWrap">
           <canvas id="floorplanCanvas"></canvas>
-          <div class="canvas-placeholder" id="canvasPlaceholder">
-            <div class="placeholder-icon">🗺️</div>
-            <p data-ar="ارفع مخطط الطابق أو ابدأ بالنقر لتحديد مواقع الكاميرات" data-en="Upload a floor plan or click to start placing cameras">ارفع مخطط الطابق أو ابدأ بالنقر لتحديد مواقع الكاميرات</p>
+          <div class="fp-placeholder" id="fpPlaceholder">
+            <div style="font-size:60px;opacity:0.2">🗺️</div>
+            <p style="color:var(--text-dim);margin-top:10px">ارفع مخطط PDF أو صورة<br/>أو ابدأ مباشرة بالرسم</p>
+            <button class="btn-primary mt-15" onclick="document.getElementById('floorplanUpload').click()">📁 رفع مخطط</button>
           </div>
         </div>
-        <div class="floorplan-legend">
-          <div class="legend-item"><span class="legend-dot indoor-dot"></span><span data-ar="كاميرا داخلية" data-en="Indoor Camera">كاميرا داخلية</span></div>
-          <div class="legend-item"><span class="legend-dot outdoor-dot"></span><span data-ar="كاميرا خارجية" data-en="Outdoor Camera">كاميرا خارجية</span></div>
-          <div class="legend-item"><span class="legend-dot rack-dot"></span><span data-ar="رك" data-en="Rack">رك</span></div>
-        </div>
-        <div class="floorplan-count" id="floorplanCount">
-          <span data-ar="كاميرات على المخطط:" data-en="Cameras on plan:">كاميرات على المخطط:</span> <strong id="fpCamCount">0</strong>
+
+        <!-- LEGEND -->
+        <div class="fp-legend">
+          <div class="fp-leg-item"><svg width="20" height="20" viewBox="0 0 40 40"><circle cx="20" cy="20" r="12" fill="#001830" stroke="#00c6ff" stroke-width="2"/><circle cx="20" cy="20" r="5" fill="#00c6ff"/></svg> Dome (داخلي)</div>
+          <div class="fp-leg-item"><svg width="20" height="20" viewBox="0 0 40 40"><rect x="8" y="15" width="18" height="10" rx="5" fill="#001830" stroke="#ff7b00" stroke-width="2"/><rect x="24" y="17" width="8" height="6" rx="2" fill="#ff7b00" opacity="0.7"/></svg> Bullet (خارجي)</div>
+          <div class="fp-leg-item"><svg width="20" height="20" viewBox="0 0 40 40"><circle cx="20" cy="20" r="12" fill="#001830" stroke="#a78bfa" stroke-width="2"/><circle cx="20" cy="20" r="4" fill="#a78bfa"/><line x1="20" y1="8" x2="20" y2="4" stroke="#a78bfa" stroke-width="2"/><line x1="32" y1="20" x2="36" y2="20" stroke="#a78bfa" stroke-width="2"/></svg> PTZ</div>
+          <div class="fp-leg-item"><svg width="20" height="20" viewBox="0 0 40 40"><rect x="10" y="12" width="20" height="16" rx="3" fill="#001830" stroke="#ff4d6d" stroke-width="2"/><circle cx="20" cy="20" r="3" fill="#ff4d6d"/></svg> Thermal</div>
+          <div class="fp-leg-item"><svg width="20" height="20" viewBox="0 0 40 40"><rect x="12" y="6" width="16" height="28" rx="2" fill="#001830" stroke="#00e5a0" stroke-width="2"/><rect x="15" y="10" width="10" height="3" rx="1" fill="#00e5a0" opacity="0.8"/></svg> Rack</div>
         </div>
       </div>
     </section>
@@ -909,14 +972,18 @@
       <div class="card mb-20">
         <h3 class="card-title">📋 محتوى التقرير — Report Scope</h3>
         <div class="report-scope-grid">
-          <label class="scope-item"><input type="checkbox" id="rsc-project" checked /> معلومات المشروع</label>
-          <label class="scope-item"><input type="checkbox" id="rsc-cameras" checked /> الكاميرات والطوابق</label>
-          <label class="scope-item"><input type="checkbox" id="rsc-racks"   checked /> الركات والـ UPS</label>
-          <label class="scope-item"><input type="checkbox" id="rsc-cables"  checked /> الكابلات</label>
-          <label class="scope-item"><input type="checkbox" id="rsc-fiber"   checked /> الفايبر أوبتيك</label>
-          <label class="scope-item"><input type="checkbox" id="rsc-network" checked /> الشبكة والسويتشات</label>
-          <label class="scope-item"><input type="checkbox" id="rsc-vw"      checked /> Video Wall وغرفة المراقبة</label>
-          <label class="scope-item"><input type="checkbox" id="rsc-labor"   checked /> العمالة وأيام العمل</label>
+          <label class="scope-item"><input type="checkbox" id="rsc-project" checked onchange="syncScope(this)"><span>معلومات المشروع</span></label>
+          <label class="scope-item"><input type="checkbox" id="rsc-cameras" checked onchange="syncScope(this)"><span>الكاميرات والطوابق</span></label>
+          <label class="scope-item"><input type="checkbox" id="rsc-racks"   checked onchange="syncScope(this)"><span>الركات والـ UPS</span></label>
+          <label class="scope-item"><input type="checkbox" id="rsc-cables"  checked onchange="syncScope(this)"><span>الكابلات</span></label>
+          <label class="scope-item"><input type="checkbox" id="rsc-fiber"   checked onchange="syncScope(this)"><span>الفايبر أوبتيك</span></label>
+          <label class="scope-item"><input type="checkbox" id="rsc-network" checked onchange="syncScope(this)"><span>الشبكة والسويتشات</span></label>
+          <label class="scope-item"><input type="checkbox" id="rsc-vw"      checked onchange="syncScope(this)"><span>Video Wall وغرفة المراقبة</span></label>
+          <label class="scope-item"><input type="checkbox" id="rsc-labor"   checked onchange="syncScope(this)"><span>العمالة وأيام العمل</span></label>
+        </div>
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <button class="btn-sm" onclick="setScopeAll(true)">✅ تحديد الكل</button>
+          <button class="btn-sm" onclick="setScopeAll(false)">⬜ إلغاء الكل</button>
         </div>
       </div>
 
