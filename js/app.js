@@ -1404,6 +1404,57 @@ const CAMERA_MODELS = {
   'Vigi':            { series: ['C540 4MP','C340 4MP','C540V Varifocal','C540WB WDR','C340WS'], codec: 'H.265/H.264', chip: 'HiSilicon' },
   'FLIR-Thermal':    { series: ['FC-Series S Thermal','A310 Fixed','FC-645 PTZ Thermal','A70 Advanced'], codec: 'H.264/RTSP', chip: 'FLIR Lepton 3.5' },
   'Hikvision-Thermal': { series: ['DS-2TD2117-3/PA','DS-2TD2136T-6/P','DS-2TD4137-25/W PTZ','DS-2TX3346-25P Bi-Spectrum'], codec: 'H.265/H.264', chip: 'DarkFighter+Thermal' },
+
+  // ── HOLOWITS (Huawei Spin-off) ──
+  'HOLOWITS-SDC':     {
+    series: [
+      'HWT-D3020 – 2MP IR Dome SDC (AI)',
+      'HWT-D3041 – 4MP IR Dome SDC',
+      'HWT-B3020 – 2MP IR Bullet SDC',
+      'HWT-B3041 – 4MP IR Bullet SDC',
+      'HWT-D5041 – 4MP WDR Dome (DeepSense AI)',
+      'HWT-D5081 – 8MP 4K Dome SDC',
+    ],
+    codec: 'H.265/H.264 SuperCoding',
+    chip: 'HiSilicon (Huawei) + NPU',
+    note: 'Software Defined Camera — قابلة للبرمجة بتطبيقات AI عبر SDK'
+  },
+  'HOLOWITS-E':       {
+    series: [
+      'E-Series 2MP Dome (SMB – Easy Install)',
+      'E-Series 4MP Bullet AI',
+      'E-Series 8MP 4K Dome',
+      'E-Series Wide-Angle 180°',
+      'E-Series PoE NVR Bundle',
+    ],
+    codec: 'H.265 SuperCoding',
+    chip: 'HiSilicon Kirin',
+    note: 'مخصصة للمشاريع الصغيرة — تعمل مع iClient S100 VMS'
+  },
+  'HOLOWITS-Thermal': {
+    series: [
+      'HWT-T4225 – Thermal 25mm Lens',
+      'HWT-T4250 – Thermal 50mm Lens',
+      'HWT-T4215-D – Bi-Spectrum Thermal+Visual',
+      'HWT-T4225-Explosion-Proof – ATEX Certified',
+      'HWT-PTZ-T – Thermal PTZ Speed Dome',
+    ],
+    codec: 'H.265/H.264 + Thermal MPEG4',
+    chip: 'HiSilicon + Uncooled VOx Detector',
+    note: 'مناسبة للمنشآت الصناعية والطاقة الكهربائية'
+  },
+  'HOLOWITS-PTZ':     {
+    series: [
+      'HWT-P3220 – 2MP 20× Optical Zoom PTZ',
+      'HWT-P3240 – 2MP 40× Optical Zoom PTZ',
+      'HWT-P5220-8M – 8MP 4K 20× PTZ',
+      'HWT-P5240 – 4MP 40× PTZ DeepSense',
+      'HWT-P-LPR – License Plate Recognition PTZ',
+    ],
+    codec: 'H.265/H.264 SuperCoding',
+    chip: 'HiSilicon + DeepSense AI Engine',
+    note: 'تدعم Auto-Tracking وFace Detection المدمج'
+  },
 };
 
 // Override updateCameraModels with full implementation
@@ -1423,12 +1474,72 @@ window.updateCameraModels = function() {
     brandSelect?.closest('.form-group')?.after(infoEl);
   }
 
+  const isHolowits = brand.startsWith('HOLOWITS');
+  const noteHtml = modelData.note
+    ? `<div class="cmi-note">💡 ${modelData.note}</div>` : '';
+
+  const holoSystemsHtml = isHolowits ? `
+    <div class="cmi-systems">
+      <div class="cmi-sys-title">🖥️ أنظمة HOLOWITS المتوافقة</div>
+      <div class="cmi-sys-grid">
+        <div class="cmi-sys-item">
+          <span class="sys-name">HWT-NVR800</span>
+          <span class="sys-desc">NVR 32ch – 4K – 4×SATA – H.265 SuperCoding</span>
+        </div>
+        <div class="cmi-sys-item">
+          <span class="sys-name">HWT-IVS1800</span>
+          <span class="sys-desc">Intelligent Video Server – AI Analytics Engine</span>
+        </div>
+        <div class="cmi-sys-item">
+          <span class="sys-name">iClient S100</span>
+          <span class="sys-desc">VMS للمشاريع الصغيرة/المتوسطة – SMB Platform</span>
+        </div>
+        <div class="cmi-sys-item">
+          <span class="sys-name">iClient S200</span>
+          <span class="sys-desc">VMS Enterprise – TV Wall · Face Recognition · Access Control</span>
+        </div>
+        <div class="cmi-sys-item">
+          <span class="sys-name">HOLOZ VMS v4.4</span>
+          <span class="sys-desc">Cloud/On-Premise VMS – Mobile App – E-Map</span>
+        </div>
+        <div class="cmi-sys-item">
+          <span class="sys-name">Perimeter AI Appliance</span>
+          <span class="sys-desc">Large Model AI – Perimeter Detection Engine</span>
+        </div>
+      </div>
+      <div class="cmi-note" style="margin-top:8px">
+        🔗 HOLOWITS تابع لـ Huawei Technologies — يعمل على HiSilicon Kirin chip مع NPU مدمج للـ AI
+      </div>
+    </div>` : '';
+
   infoEl.innerHTML = `
-    <div class="cmi-header">${brand} — Series & Models</div>
+    <div class="cmi-header">${brand.replace('HOLOWITS-', 'HOLOWITS – ')} — Series & Models</div>
     <div class="cmi-chip">Chip: <span>${modelData.chip}</span> | Codec: <span>${modelData.codec}</span></div>
-    <div class="cmi-series">
+    ${noteHtml}
+    <div class="cmi-series" style="margin-top:8px">
       ${modelData.series.map(s => `<span class="cmi-badge">${s}</span>`).join('')}
-    </div>`;
+    </div>
+    ${holoSystemsHtml}`;
+
+  // Auto-update recording system select if HOLOWITS
+  if (isHolowits) {
+    const recSel = document.getElementById('recordingSystem');
+    if (recSel) {
+      // Add HOLOWITS options if not already present
+      if (!recSel.querySelector('option[value="HOLOWITS-NVR800"]')) {
+        const grp = document.createElement('optgroup');
+        grp.label = 'HOLOWITS Systems';
+        grp.innerHTML = `
+          <option value="HOLOWITS-NVR800">HWT-NVR800 – 32ch NVR (H.265 SuperCoding)</option>
+          <option value="HOLOWITS-IVS1800">HWT-IVS1800 – Intelligent Video Server</option>
+          <option value="HOLOWITS-S100">iClient S100 VMS – SMB Platform</option>
+          <option value="HOLOWITS-S200">iClient S200 VMS – Enterprise Platform</option>
+          <option value="HOLOWITS-Cloud">HOLOZ VMS – Cloud/On-Premise</option>`;
+        recSel.appendChild(grp);
+        recSel.value = 'HOLOWITS-NVR800';
+      }
+    }
+  }
 };
 
 // ── Full generateReport with scope selectors ──
